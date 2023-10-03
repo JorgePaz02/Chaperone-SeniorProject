@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
-      registerUsingEmailPassword(name:"Jorge",email:"Test@gmail.com",password:"Password123!");
+    
     });
   }
 
@@ -121,35 +121,4 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 
-  // For registering a new user
-Future<User?> registerUsingEmailPassword({
-    required String name,
-    required String email,
-    required String password,
-  }) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      user = userCredential.user;
-      await user!.updateDisplayName(name);
-      await user.reload();
-      user = auth.currentUser;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      }
-    } catch (e) {
-      print(e);
-    }
-
-    return user;
-  }
+ 
