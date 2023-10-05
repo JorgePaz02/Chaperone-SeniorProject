@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'create_group_screen.dart';
-import 'main_screen.dart';
-import 'welcome_screen.dart';
-import 'home_screen.dart'; // Import the new screen
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
