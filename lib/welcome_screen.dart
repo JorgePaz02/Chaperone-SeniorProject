@@ -1,11 +1,16 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -29,18 +34,20 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30.0),
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: TextField(
+                controller: emailController,
                 decoration: InputDecoration(
                   labelText: "Username",
                   border: OutlineInputBorder(),
                 ),
               ),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: TextField(
+                controller: passwordController,
                 decoration: InputDecoration(
                   labelText: "Password",
                   border: OutlineInputBorder(),
@@ -51,6 +58,7 @@ class WelcomeScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Add your Log In button functionality here
+                registerUsingEmailPassword(name: emailController.text, emailAddress: emailController.text, password: passwordController.text);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -59,7 +67,8 @@ class WelcomeScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 primary: Colors.black, // Button background color
                 onPrimary: Colors.white, // Text color
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 textStyle: const TextStyle(
                   fontSize: 18,
                 ),
@@ -70,5 +79,22 @@ class WelcomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+Future<User?> registerUsingEmailPassword({
+  required String name,
+  required String emailAddress,
+  required String password,
+}) async {
+  try {
+    final credential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: emailAddress, password: password);
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'user-not-found') {
+      print('No user found for that email.');
+    } else if (e.code == 'wrong-password') {
+      print('Wrong password provided for that user.');
+    }
   }
 }
