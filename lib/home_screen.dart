@@ -84,7 +84,7 @@ class HomeScreen extends StatelessWidget {
                             child: IconButton(
                               icon: const Icon(Icons.group_add, size: 48.0),
                               onPressed: () {
-                                // Add your Join Group functionality here
+                                Navigator.pushNamed(context, '/joinGroup');
                               },
                             ),
                           ),

@@ -64,7 +64,7 @@ class CreateGroupScreen extends StatelessWidget {
               height: 60.0, // Set the desired height for the button
               child: ElevatedButton(
                 onPressed: () {
-                  // Add your Create Group functionality here
+                   Navigator.pushNamed(context, '/groupCreated');
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black, // Set the button background color to black

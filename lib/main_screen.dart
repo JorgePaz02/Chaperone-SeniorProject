@@ -1,3 +1,4 @@
+import 'package:app/register_user.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatelessWidget {
@@ -39,7 +40,10 @@ class MainScreen extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Add your Sign Up button functionality here
+                    Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Registration()),
+                );
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.white, // Button background color

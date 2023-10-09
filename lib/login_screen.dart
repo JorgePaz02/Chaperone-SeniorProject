@@ -1,12 +1,13 @@
-import 'package:app/login_screen.dart';
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
+import 'home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class Registration extends StatelessWidget {
-  const Registration({Key? key}) : super(key: key);
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  
   Widget build(BuildContext context) {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
@@ -26,35 +27,29 @@ class Registration extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              "Please Sign Up",
+              "Welcome Back!",
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-             const SizedBox(height: 30.0),
-             Padding(
-              // ignore: prefer_const_constructors
+            const SizedBox(height: 30.0),
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: TextField(
-                 controller: emailController,
-                 // ignore: prefer_const_constructors
+                controller: emailController,
                 decoration: InputDecoration(
-                  labelText: "Email",
-                  // ignore: prefer_const_constructors
+                  labelText: "Username",
                   border: OutlineInputBorder(),
                 ),
               ),
             ),
             Padding(
-              // ignore: prefer_const_constructors
               padding: EdgeInsets.all(16.0),
               child: TextField(
                 controller: passwordController,
-                // ignore: prefer_const_constructors
                 decoration: InputDecoration(
                   labelText: "Password",
-                  // ignore: prefer_const_constructors
                   border: OutlineInputBorder(),
                 ),
                 obscureText: true,
@@ -62,22 +57,23 @@ class Registration extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                registerUsingEmailPassword(name: emailController.text, email: emailController.text, password:passwordController.text);
-                // Add your Sign up button functionality here
+                // Add your Log In button functionality here
+                registerUsingEmailPassword(name: emailController.text, emailAddress: emailController.text, password: passwordController.text);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.black, // Button background color
                 onPrimary: Colors.white, // Text color
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 textStyle: const TextStyle(
                   fontSize: 18,
                 ),
               ),
-              child: const Text("Sign Up"),
+              child: const Text("Log In"),
             ),
           ],
         ),
@@ -86,36 +82,19 @@ class Registration extends StatelessWidget {
   }
 }
 
-
-
 Future<User?> registerUsingEmailPassword({
-    required String name,
-    required String email,
-    required String password,
-  }) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      user = userCredential.user;
-      await user!.updateDisplayName(name);
-      await user.reload();
-      user = auth.currentUser;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      }
-    } catch (e) {
-      print(e);
+  required String name,
+  required String emailAddress,
+  required String password,
+}) async {
+  try {
+    final credential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: emailAddress, password: password);
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'user-not-found') {
+      print('No user found for that email.');
+    } else if (e.code == 'wrong-password') {
+      print('Wrong password provided for that user.');
     }
-
-    return user;
   }
+}
