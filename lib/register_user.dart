@@ -1,6 +1,7 @@
 import 'package:app/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:app/UserInfo/usermodel.dart';
 
 class Registration extends StatelessWidget {
   const Registration({Key? key}) : super(key: key);
@@ -61,8 +62,27 @@ class Registration extends StatelessWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                registerUsingEmailPassword(name: emailController.text, email: emailController.text, password:passwordController.text);
+              onPressed: () async {
+               // registerUsingEmailPassword(name: emailController.text, email: emailController.text, password:passwordController.text);
+                  try {
+            UserCredential user =
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+              email: emailController.text,
+              password: passwordController.text,
+            );
+            User? updateUser = FirebaseAuth.instance.currentUser;
+            updateUser!.updateDisplayName(emailController.text);
+            userSetup(emailController.text);
+          } on FirebaseAuthException catch (e) {
+            if (e.code == 'weak-password') {
+              print('The password provided is too weak.');
+            } else if (e.code == 'email-already-in-use') {
+              print('The account already exists for that email.');
+            }
+          } catch (e) {
+            print(e.toString());
+          }
+        
                 // Add your Sign up button functionality here
                 Navigator.push(
                   context,
