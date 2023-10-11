@@ -5,7 +5,6 @@ import 'package:app/message_screen.dart';
 import 'package:app/register_user.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'group_created_screen.dart';
 import 'home_screen.dart';
 import 'join_group.dart';

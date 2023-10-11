@@ -1,12 +1,18 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:app/UserInfo/groupmodel.dart';
 import 'package:flutter/material.dart';
 
 class CreateGroupScreen extends StatelessWidget {
   CreateGroupScreen({Key? key}) : super(key: key);
-    final List<int> maxMembersOptions = List.generate(19, (index) => index + 2); // Generate values from 2 to 20
-
+  final List<int> maxMembersOptions =
+      List.generate(19, (index) => index + 2); // Generate values from 2 to 20
 
   @override
   Widget build(BuildContext context) {
+    final groupnametext = TextEditingController();
+    final passcode = TextEditingController();
+    int number = 0;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -18,7 +24,7 @@ class CreateGroupScreen extends StatelessWidget {
           },
         ),
       ),
-         body: Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -30,9 +36,10 @@ class CreateGroupScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20.0),
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: TextField(
+                controller: groupnametext,
                 decoration: InputDecoration(
                   labelText: "Group Name",
                   border: OutlineInputBorder(),
@@ -43,9 +50,10 @@ class CreateGroupScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: DropdownButtonFormField<int>(
                 decoration: const InputDecoration(
-                  labelText: "Max Members",
+                  labelText: "Max Members", ////////////////NOT COMPLETE
                   border: OutlineInputBorder(),
                 ),
+
                 value: null, // Initially no value is selected
                 items: maxMembersOptions.map((value) {
                   return DropdownMenuItem<int>(
@@ -58,16 +66,19 @@ class CreateGroupScreen extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 20.0), // Add spacing between dropdown and button
+            const SizedBox(
+                height: 20.0), // Add spacing between dropdown and button
             SizedBox(
               width: 200.0, // Set the desired width for the button
               height: 60.0, // Set the desired height for the button
               child: ElevatedButton(
                 onPressed: () {
-                   Navigator.pushNamed(context, '/groupCreated');
+                  groupSetup(groupnametext.text, number, passcode.text);           //////////FIX VARIABLES
+                  Navigator.pushNamed(context, '/groupCreated');
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.black, // Set the button background color to black
+                  primary:
+                      Colors.black, // Set the button background color to black
                 ),
                 child: const Text(
                   "Create Group",
