@@ -12,15 +12,13 @@ void main() {
 
   // Close the connection to the driver after the tests have completed.
   tearDownAll(() async {
-    if (driver != null) {
-      driver.close();
-    }
-  });
+    driver.close();
+    });
 
   group('Test', () {
 
     test("Testing", () async {
-      expect(await true, true);
+      expect(true, true);
     });
   });
 }

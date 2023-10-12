@@ -1,11 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+final db = FirebaseFirestore.instance;
+
 
 Future<void> userSetup(String displayName) async {
-  CollectionReference users = FirebaseFirestore.instance.collection('Users');
-  
-  FirebaseAuth auth = FirebaseAuth.instance;
-  String uid = auth.currentUser!.uid.toString();
-  users.add({'displayName': displayName, 'uid': uid, 'group member': false, 'group leader': false});
-  return;
+ CollectionReference group = FirebaseFirestore.instance.collection('Users');
+
+  final user = db.collection("Users");
+
+final data = <String, dynamic>{
+  'displayName': displayName,
+  'group leader': false,
+  'group': "N/A"
+};
+
+
+  user.doc(displayName).set(data);
 }
+
+
+
+ 

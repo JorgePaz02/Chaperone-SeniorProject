@@ -7,12 +7,13 @@ class CreateGroupScreen extends StatelessWidget {
   CreateGroupScreen({Key? key}) : super(key: key);
   final List<int> maxMembersOptions =
       List.generate(19, (index) => index + 2); // Generate values from 2 to 20
-
+      final groupname = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final groupnametext = TextEditingController();
+    
     final passcode = TextEditingController();
     int number = 0;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -39,7 +40,7 @@ class CreateGroupScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(16.0),
               child: TextField(
-                controller: groupnametext,
+                controller: groupname,
                 decoration: InputDecoration(
                   labelText: "Group Name",
                   border: OutlineInputBorder(),
@@ -62,6 +63,7 @@ class CreateGroupScreen extends StatelessWidget {
                   );
                 }).toList(),
                 onChanged: (newValue) {
+                  number = newValue!.toInt();
                   // Handle the dropdown value change here
                 },
               ),
@@ -73,11 +75,12 @@ class CreateGroupScreen extends StatelessWidget {
               height: 60.0, // Set the desired height for the button
               child: ElevatedButton(
                 onPressed: () {
-                  groupSetup(groupnametext.text, number, passcode.text);           //////////FIX VARIABLES
+                  //////////FIX VARIABLES
+              
                   Navigator.pushNamed(context, '/groupCreated');
                 },
                 style: ElevatedButton.styleFrom(
-                  primary:
+                  backgroundColor:
                       Colors.black, // Set the button background color to black
                 ),
                 child: const Text(
@@ -93,5 +96,9 @@ class CreateGroupScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String groupName() {
+    return groupname.text;
   }
 }

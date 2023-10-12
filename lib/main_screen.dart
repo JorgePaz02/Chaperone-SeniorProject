@@ -28,8 +28,7 @@ class MainScreen extends StatelessWidget {
                     Navigator.pushNamed(context, '/welcome');
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white, // Button background color
-                    onPrimary: Colors.black, // Text color
+                    foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16), // Button padding
                     textStyle: const TextStyle(
                       fontSize: 18, // Text size
@@ -46,8 +45,7 @@ class MainScreen extends StatelessWidget {
                 );
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.white, // Button background color
-                    onPrimary: Colors.black, // Text color
+                    foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16), // Button padding
                     textStyle: const TextStyle(
                       fontSize: 18, // Text size

@@ -1,7 +1,7 @@
-
-
+import 'package:app/UserInfo/groupmodel.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:app/create_group_screen.dart';
 
 String generateRandomCode({int length = 6}) {
   final random = Random();
@@ -46,9 +46,10 @@ class GroupCreatedScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-           const SizedBox(height: 120.0), // Add spacing between text and code
+            const SizedBox(height: 120.0), // Add spacing between text and code
             Container(
-              padding: const EdgeInsets.all(16.0), // Add padding to create the text box
+              padding: const EdgeInsets.all(
+                  16.0), // Add padding to create the text box
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.black), // Border color
                 borderRadius: BorderRadius.circular(0.0), // Rounded corners
@@ -75,15 +76,19 @@ class GroupCreatedScreen extends StatelessWidget {
             ),
             Expanded(
               child: Align(
-                alignment: Alignment.center, // Align the button to the bottom center
+                alignment:
+                    Alignment.center, // Align the button to the bottom center
                 child: ElevatedButton(
                   onPressed: () {
-                   Navigator.pushNamed(context, '/groupScreen');
-
+                    Navigator.pushNamed(context, '/groupScreen');
+                    groupSetup(CreateGroupScreen().groupName(), 10, randomCode);
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black, // Set the button background color to black
-                    padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 16.0), // Adjust padding as needed
+                    backgroundColor: Colors
+                        .black, // Set the button background color to black
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40.0,
+                        vertical: 16.0), // Adjust padding as needed
                   ),
                   child: const Text(
                     "Continue",

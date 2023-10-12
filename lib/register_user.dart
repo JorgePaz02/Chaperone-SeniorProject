@@ -90,8 +90,7 @@ class Registration extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.black, // Button background color
-                onPrimary: Colors.white, // Text color
+                foregroundColor: Colors.white, backgroundColor: Colors.black, // Text color
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 textStyle: const TextStyle(
                   fontSize: 18,
