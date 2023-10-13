@@ -32,10 +32,10 @@ class MyApp extends StatelessWidget {
             CreateGroupScreen(), // Add Create Group screen route
           '/groupCreated': (context) => GroupCreatedScreen(), 
           '/Registration': (context) => const Registration(),
-          '/joinGroup':(context) => const JoinGroupScreen(), 
+          '/joinGroup':(context) => JoinGroupScreen(), 
           '/groupScreen': (context) => const GroupScreen(), 
           '/announceScreen': (context) => const AnnouncementScreen(),
-          "/messageScreen": (context) => MessageScreen(),      },
+          "/messageScreen": (context) => const MessageScreen(),      },
     );
   }
 }

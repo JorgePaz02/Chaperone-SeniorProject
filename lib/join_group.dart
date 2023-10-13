@@ -1,10 +1,15 @@
+// ignore_for_file: prefer_const_constructors
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'UserInfo/joiningGroupmodel.dart';
 
 class JoinGroupScreen extends StatelessWidget {
-  const JoinGroupScreen({Key? key}) : super(key: key);
-
+  JoinGroupScreen({Key? key}) : super(key: key);
+  final FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
+    final passcode = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -20,7 +25,7 @@ class JoinGroupScreen extends StatelessWidget {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const <Widget>[
+            children: <Widget>[
               SizedBox(height: 60), // Spacer
               Text(
                 'Enter your group code:',
@@ -39,6 +44,7 @@ class JoinGroupScreen extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20),
+                  controller: passcode,
                 ),
               ),
               SizedBox(height: 40), // Spacer
@@ -51,10 +57,12 @@ class JoinGroupScreen extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () {
             // Add your join group functionality here
+            print(passcode);
+            joininggroup(passcode.text, auth.currentUser!.displayName);
           },
           style: ElevatedButton.styleFrom(
-            primary: Colors.black,
-            onPrimary: Colors.white,
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.black,
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
             textStyle: const TextStyle(fontSize: 20),
           ),
