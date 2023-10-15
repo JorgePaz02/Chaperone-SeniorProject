@@ -1,11 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:app/UserInfo/groupmodel.dart';
+import 'package:app/group_created_screen.dart';
 import 'package:flutter/material.dart';
 
 class CreateGroupScreen extends StatelessWidget {
    final groupname = TextEditingController();
- int number = 0;
+   int number = 0;
   CreateGroupScreen({Key? key}) : super(key: key);
   final List<int> maxMembersOptions =
       List.generate(19, (index) => index + 2); // Generate values from 2 to 20
@@ -79,7 +80,10 @@ class CreateGroupScreen extends StatelessWidget {
                 onPressed: () {
                   //////////FIX VARIABLES
 
-                  Navigator.pushNamed(context, '/groupCreated');
+                  //Navigator.pushNamed(context, '/groupCreated');
+                   Navigator.push(context,
+        MaterialPageRoute(
+          builder: (context) => new groupcreated(name: groupname.text, passcode: number)));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor:

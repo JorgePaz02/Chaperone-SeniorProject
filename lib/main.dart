@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(), // Add a route for HomeScreen
         '/createGroup': (context) =>
             CreateGroupScreen(), // Add Create Group screen route
-          '/groupCreated': (context) => GroupCreatedScreen(), 
+          //'/groupCreated': (context) => GroupCreatedScreen(), 
           '/Registration': (context) => const Registration(),
           '/joinGroup':(context) => JoinGroupScreen(), 
           '/groupScreen': (context) => const GroupScreen(), 
