@@ -73,6 +73,10 @@ class Registration extends StatelessWidget {
             User? updateUser = FirebaseAuth.instance.currentUser;
             updateUser!.updateDisplayName(emailController.text);
             userSetup(emailController.text);
+                            Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
           } on FirebaseAuthException catch (e) {
             if (e.code == 'weak-password') {
               print('The password provided is too weak.');
@@ -84,10 +88,7 @@ class Registration extends StatelessWidget {
           }
         
                 // Add your Sign up button functionality here
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
+
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white, backgroundColor: Colors.black, // Text color
