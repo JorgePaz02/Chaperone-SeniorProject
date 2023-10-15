@@ -83,6 +83,7 @@ class CreateGroupScreen extends StatelessWidget {
                   //Navigator.pushNamed(context, '/groupCreated');
                    Navigator.push(context,
         MaterialPageRoute(
+          // ignore: unnecessary_new
           builder: (context) => new groupcreated(name: groupname.text, passcode: number)));
                 },
                 style: ElevatedButton.styleFrom(

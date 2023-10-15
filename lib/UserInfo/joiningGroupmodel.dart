@@ -8,4 +8,8 @@ Future<void> joininggroup(passcode, displayName) async {
   docRef.update({
     "members": FieldValue.arrayUnion([displayName]),
   });
+  final docRef2 = db.collection("Users").doc(displayName);
+  docRef.update({
+    "group": passcode,
+  });
 }
