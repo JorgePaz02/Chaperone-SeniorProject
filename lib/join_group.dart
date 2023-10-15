@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'UserInfo/joiningGroupmodel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class JoinGroupScreen extends StatelessWidget {
   JoinGroupScreen({Key? key}) : super(key: key);
@@ -57,8 +58,17 @@ class JoinGroupScreen extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () {
             // Add your join group functionality here
-            print(passcode);
-            joininggroup(passcode.text, auth.currentUser!.displayName);
+            FirebaseFirestore.instance
+                .collection('Groups')
+                .doc(passcode.text)
+                .get()
+                .then((DocumentSnapshot documentSnapshot) {
+                  if (documentSnapshot.exists){
+                    joininggroup(passcode.text, auth.currentUser!.displayName);
+                    Navigator.pushNamed(context, '/groupScreen');
+                  }
+
+                });
           },
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
