@@ -4,15 +4,17 @@ import 'package:app/UserInfo/groupmodel.dart';
 import 'package:flutter/material.dart';
 
 class CreateGroupScreen extends StatelessWidget {
+   final groupname = TextEditingController();
+ int number = 0;
   CreateGroupScreen({Key? key}) : super(key: key);
   final List<int> maxMembersOptions =
       List.generate(19, (index) => index + 2); // Generate values from 2 to 20
-      final groupname = TextEditingController();
+
+
   @override
   Widget build(BuildContext context) {
-    
-    final passcode = TextEditingController();
-    int number = 0;
+ 
+
 
     return Scaffold(
       appBar: AppBar(
@@ -76,7 +78,7 @@ class CreateGroupScreen extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   //////////FIX VARIABLES
-              
+
                   Navigator.pushNamed(context, '/groupCreated');
                 },
                 style: ElevatedButton.styleFrom(
@@ -98,7 +100,7 @@ class CreateGroupScreen extends StatelessWidget {
     );
   }
 
-  String groupName() {
-    return groupname.text;
+  String getText() {
+     return groupname.text;
   }
 }
