@@ -103,7 +103,9 @@ class GroupCreatedScreen extends State<groupcreated> {
                     groupSetup(
                         widget.name,
                         widget.passcode,
-                        randomCode); //////FIX VARIABLES
+                        randomCode,
+                        auth.currentUser!.displayName
+                        ); //////FIX VARIABLES
 
                     joininggroup(randomCode, auth.currentUser!.displayName);
                   },
