@@ -5,7 +5,7 @@ final db = FirebaseFirestore.instance;
 Future<void> groupSetup(String groupname, int num, String passcode) async {
   CollectionReference group = FirebaseFirestore.instance.collection('Groups');
 
-  final Group = db.collection("Groups");
+
 
 final data = <String, dynamic>{
   "groupname": groupname,

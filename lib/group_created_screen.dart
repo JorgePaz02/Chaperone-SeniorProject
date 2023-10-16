@@ -2,6 +2,8 @@ import 'package:app/UserInfo/groupmodel.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:app/create_group_screen.dart';
+import 'UserInfo/joiningGroupmodel.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 String generateRandomCode({int length = 6}) {
   final random = Random();
@@ -12,11 +14,28 @@ String generateRandomCode({int length = 6}) {
   ));
 }
 
-// ignore: use_key_in_widget_constructors
-class GroupCreatedScreen extends StatelessWidget {
-  final String randomCode = generateRandomCode();
 
+class groupcreated extends StatefulWidget{
+ groupcreated({required this.name, required this.passcode});
+  final String name;
+  final int passcode;
+ 
+  // etc
   @override
+  State<StatefulWidget> createState() { return new GroupCreatedScreen();}
+}
+
+// ignore: use_key_in_widget_constructors
+class GroupCreatedScreen extends State<groupcreated> {
+
+
+
+  final groupnames = CreateGroupScreen().groupname;
+  final numbers = CreateGroupScreen().number;
+  final String randomCode = generateRandomCode();
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  @override
+  
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -81,7 +100,12 @@ class GroupCreatedScreen extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/groupScreen');
-                    groupSetup(CreateGroupScreen().groupName(), 10, randomCode);
+                    groupSetup(
+                        widget.name,
+                        widget.passcode,
+                        randomCode); //////FIX VARIABLES
+
+                    joininggroup(randomCode, auth.currentUser!.displayName);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors
