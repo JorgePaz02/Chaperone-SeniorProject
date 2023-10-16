@@ -11,6 +11,6 @@ Future<void> joininggroup(passcode, displayName) async {
   final docRef2 = db.collection("Users").doc(displayName);
   docRef2.update({
     "group": passcode,
-    "group leader":false
+
   });
 }
