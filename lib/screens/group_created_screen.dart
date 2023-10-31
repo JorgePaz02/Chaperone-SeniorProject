@@ -1,8 +1,8 @@
 import 'package:app/UserInfo/groupmodel.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:app/create_group_screen.dart';
-import 'UserInfo/joiningGroupmodel.dart';
+import 'package:app/screens/create_group_screen.dart';
+import '../UserInfo/joiningGroupmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 String generateRandomCode({int length = 6}) {
