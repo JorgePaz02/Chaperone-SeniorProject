@@ -64,6 +64,25 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+                        // FilledButton(
+                        //   style: ButtonStyle(
+
+                        //   ),
+                        //   //radius: 60.0,
+                        //   //backgroundColor: Colors.blue, // Background color of the circle button
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.all(8.0), // Add padding
+                        //     child: IconButton(
+                        //       icon: const Icon(Icons.person_add, size: 48.0),
+                        //       onPressed: () {
+                        //         Navigator.pushNamed(context, '/createGroup');
+                        //       },
+                        //     ),
+                        //   ),
+                        //   onPressed: () {
+                        //     Navigator.pushNamed(context, '/createGroup');
+                        //   },
+                        // ),
                         const SizedBox(height: 10.0), // Add spacing between text and button
                         const Text(
                           "Create Group",

@@ -13,7 +13,7 @@ class MainScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              "Group Advisor",
+              "Party Patrol",
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
