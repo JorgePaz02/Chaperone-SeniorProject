@@ -15,7 +15,6 @@ final data = <String, dynamic>{
 };
 
 
-
   final docRef2 = db.collection("Users").doc(displayName);
   docRef2.update({
     "group leader":true, ///BUGGED
