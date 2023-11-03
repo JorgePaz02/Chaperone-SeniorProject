@@ -1,4 +1,5 @@
 import 'package:app/UserInfo/groupmodel.dart';
+import 'package:app/UserInfo/joiningGroupasLeader.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:app/screens/create_group_screen.dart';
@@ -107,7 +108,7 @@ class GroupCreatedScreen extends State<groupcreated> {
                         auth.currentUser!.displayName
                         ); //////FIX VARIABLES
 
-                    joininggroup(randomCode, auth.currentUser!.displayName);
+                    joininggroupAsLeader(randomCode, auth.currentUser!.displayName);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-Future<void> joininggroup(passcode, displayName) async {
+Future<void> joininggroupAsLeader(passcode, displayName) async {
   final db = FirebaseFirestore.instance;
 
   final docRef = db.collection("Groups").doc(passcode);
@@ -14,8 +14,8 @@ Future<void> joininggroup(passcode, displayName) async {
 
   });
 
-      final docRef3 = db.collection("Users").doc(displayName);
+    final docRef3 = db.collection("Users").doc(displayName);
   docRef3.update({
-    "group leader":false, 
+    "group leader":true, 
   });
 }
