@@ -1,11 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
+  HomeScreen({Key? key}) : super(key: key);
+  final FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
+
+        void checkGroup() {
+      FirebaseFirestore.instance
+          .collection('Users')
+          .doc(auth.currentUser!.displayName)
+          .get()
+          .then((value) {
+        if (value.get('group') != "") {
+          Navigator.pushNamed(context, '/groupScreen');
+        }
+      });
+    }  checkGroup();
     return Scaffold(
+      
       appBar: null,
       body: Stack(
         children: <Widget>[

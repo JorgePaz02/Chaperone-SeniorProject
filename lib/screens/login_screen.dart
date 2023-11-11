@@ -65,7 +65,7 @@ class LoginScreen extends StatelessWidget {
                           password: passwordController.text);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
                   );
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {

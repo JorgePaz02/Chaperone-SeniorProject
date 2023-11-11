@@ -10,6 +10,9 @@ class JoinGroupScreen extends StatelessWidget {
   final FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
+
+
+                                             //Checks if user is in group already.
     final passcode = TextEditingController();
     return Scaffold(
       appBar: AppBar(
@@ -63,12 +66,11 @@ class JoinGroupScreen extends StatelessWidget {
                 .doc(passcode.text)
                 .get()
                 .then((DocumentSnapshot documentSnapshot) {
-                  if (documentSnapshot.exists){
-                    joininggroup(passcode.text, auth.currentUser!.displayName);
-                    Navigator.pushNamed(context, '/groupScreen');
-                  }
-
-                });
+              if (documentSnapshot.exists) {
+                joininggroup(passcode.text, auth.currentUser!.displayName);
+                Navigator.pushNamed(context, '/groupScreen');
+              }
+            });
           },
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,

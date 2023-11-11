@@ -6,7 +6,6 @@ import 'package:app/screens/register_user.dart';
 import 'package:app/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'screens/group_created_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/join_group.dart';
 import 'screens/main_screen.dart';
@@ -29,7 +28,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => SplashScreen(),
         '/mainscreen':(context) => const MainScreen(),
         '/welcome': (context) => const LoginScreen(),
-        '/home': (context) => const HomeScreen(), // Add a route for HomeScreen
+        '/home': (context) => HomeScreen(), // Add a route for HomeScreen
         '/createGroup': (context) => CreateGroupScreen(), // Add Create Group screen route
           //'/groupCreated': (context) => GroupCreatedScreen(), 
           '/Registration': (context) => const Registration(),

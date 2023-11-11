@@ -4,14 +4,15 @@ final db = FirebaseFirestore.instance;
 
 Future<void> groupSetup(String groupname, int num, String passcode,displayName) async {
   CollectionReference group = FirebaseFirestore.instance.collection('Groups');
-
+  var announcements = [];
 
 
 final data = <String, dynamic>{
   "groupname": groupname,
   "number of members": num,
   "passcode": passcode,
-  "members": [displayName]
+  "members": [displayName],
+  "announcements": announcements
 };
 
 
