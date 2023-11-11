@@ -1,8 +1,9 @@
 import 'package:app/UserInfo/groupmodel.dart';
+import 'package:app/UserInfo/joiningGroupasLeader.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:app/create_group_screen.dart';
-import 'UserInfo/joiningGroupmodel.dart';
+import 'package:app/screens/create_group_screen.dart';
+import '../UserInfo/joiningGroupmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 String generateRandomCode({int length = 6}) {
@@ -107,7 +108,7 @@ class GroupCreatedScreen extends State<groupcreated> {
                         auth.currentUser!.displayName
                         ); //////FIX VARIABLES
 
-                    joininggroup(randomCode, auth.currentUser!.displayName);
+                    joininggroupAsLeader(randomCode, auth.currentUser!.displayName);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors

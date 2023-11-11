@@ -1,4 +1,4 @@
-import 'package:app/login_screen.dart';
+import 'package:app/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app/UserInfo/usermodel.dart';

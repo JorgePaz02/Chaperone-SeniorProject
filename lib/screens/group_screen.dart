@@ -1,15 +1,40 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 
 class GroupScreen extends StatelessWidget {
   const GroupScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    Future<String> groupName() async {
+     return await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(auth.currentUser!.displayName)
+          .get()
+          .then((value) {
+          if (value.get('group') != "") {
+            return value.get('group');
+          }
+          return '';
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        // title: Text("test" + groupname().toString(),
+        //     style: const TextStyle(color: Colors.black)),
+        title: FutureBuilder<String>(
+           future: groupName(), 
+           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+               if (snapshot.hasData) {
+                  return Text(snapshot.data.toString(), style: const TextStyle(color: Colors.black));
+               }
+               return const Text('');
+           }),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -17,24 +42,25 @@ class GroupScreen extends StatelessWidget {
           },
         ),
       ),
-     body: Center(
+      body: Center(
         child: GridView.count(
           crossAxisCount: 2, // Two columns
           padding: const EdgeInsets.all(16.0),
           mainAxisSpacing: 16.0, // Spacing between rows
           crossAxisSpacing: 16.0, // Spacing between columns
           children: <Widget>[
-            _buildCircularButton(Icons.announcement, "Announcements", Colors.blue, () {
+            _buildCircularButton(
+                Icons.announcement, "Announcements", Colors.blue, () {
               Navigator.pushNamed(context, '/announceScreen');
 
               print("Announcements button tapped");
             }),
             _buildCircularButton(Icons.message, "Messages", Colors.green, () {
               // Add functionality for Messages button here
-             Navigator.pushNamed(context, "/messageScreen");
-
+              Navigator.pushNamed(context, "/messageScreen");
             }),
-            _buildCircularButton(Icons.health_and_safety, "Safety", Colors.red, () {
+            _buildCircularButton(Icons.health_and_safety, "Safety", Colors.red,
+                () {
               // Add functionality for Safety button here
               print("Safety button tapped");
             }),
@@ -56,9 +82,11 @@ class GroupScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCircularButton(IconData icon, String label, Color color, VoidCallback onPressed) {
+  Widget _buildCircularButton(
+      IconData icon, String label, Color color, VoidCallback onPressed) {
     return InkWell(
-      onTap: onPressed, // Use the provided onPressed callback for individual functionality
+      onTap:
+          onPressed, // Use the provided onPressed callback for individual functionality
       child: Container(
         decoration: BoxDecoration(
           color: color,
