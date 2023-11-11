@@ -8,26 +8,33 @@ class GroupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
-    Future groupname() async {
+    Future<String> groupName() async {
      return await FirebaseFirestore.instance
           .collection('Users')
           .doc(auth.currentUser!.displayName)
           .get()
           .then((value) {
-        if (value.get('group') != "") {
-          print(value.get('group'));
-          return value.get('group');
-        }
+          if (value.get('group') != "") {
+            return value.get('group');
+          }
+          return '';
       });
-  
     }
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text("" + groupname().toString(),
-            style: const TextStyle(color: Colors.black)),
+        // title: Text("test" + groupname().toString(),
+        //     style: const TextStyle(color: Colors.black)),
+        title: FutureBuilder<String>(
+           future: groupName(), 
+           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+               if (snapshot.hasData) {
+                  return Text(snapshot.data.toString(), style: const TextStyle(color: Colors.black));
+               }
+               return const Text('');
+           }),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
