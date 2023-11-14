@@ -23,7 +23,7 @@ class groupcreated extends StatefulWidget{
  
   // etc
   @override
-  State<StatefulWidget> createState() { return new GroupCreatedScreen();}
+  State<StatefulWidget> createState() { return GroupCreatedScreen();}
 }
 
 // ignore: use_key_in_widget_constructors
