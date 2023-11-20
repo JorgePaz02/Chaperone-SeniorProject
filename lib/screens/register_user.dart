@@ -75,7 +75,7 @@ class Registration extends StatelessWidget {
             userSetup(emailController.text);
                             Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
           } on FirebaseAuthException catch (e) {
             if (e.code == 'weak-password') {

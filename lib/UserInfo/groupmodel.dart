@@ -2,24 +2,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 final db = FirebaseFirestore.instance;
 
-Future<void> groupSetup(String groupname, int num, String passcode,displayName) async {
-  CollectionReference group = FirebaseFirestore.instance.collection('Groups');
+Future<void> groupSetup(String groupname, int num, String passcode, displayName, int radius) async {
+  final db = FirebaseFirestore.instance;
+  CollectionReference group = db.collection('Groups');
   var announcements = [];
 
-
-final data = <String, dynamic>{
-  "groupname": groupname,
-  "number of members": num,
-  "passcode": passcode,
-  "members": [displayName],
-  "announcements": announcements
-};
-
+  final data = <String, dynamic>{
+    "groupname": groupname,
+    "number of members": num,
+    "passcode": passcode,
+    "members": [displayName],
+    "announcements": announcements,
+    "radius": radius, // Add the radius to the group data
+  };
 
   final docRef2 = db.collection("Users").doc(displayName);
   docRef2.update({
-    "group leader":true, ///BUGGED
+    "group leader": true,
   });
 
-  group.doc(passcode).set(data);
+  await group.doc(passcode).set(data);
 }
+

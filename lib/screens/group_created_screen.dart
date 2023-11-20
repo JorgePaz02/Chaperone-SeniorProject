@@ -1,5 +1,6 @@
 import 'package:app/UserInfo/groupmodel.dart';
 import 'package:app/UserInfo/joiningGroupasLeader.dart';
+import 'package:app/screens/radius_update_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:app/screens/create_group_screen.dart';
@@ -99,17 +100,26 @@ class GroupCreatedScreen extends State<groupcreated> {
                 alignment:
                     Alignment.center, // Align the button to the bottom center
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/groupScreen');
-                    groupSetup(
-                        widget.name,
-                        widget.passcode,
-                        randomCode,
-                        auth.currentUser!.displayName
-                        ); //////FIX VARIABLES
+                 onPressed: () {
+  int radius = 0; // Replace this with your actual radius value
+  groupSetup(
+    widget.name,
+    widget.passcode,
+    randomCode,
+    auth.currentUser!.displayName,
+    radius,
+  );
 
-                    joininggroupAsLeader(randomCode, auth.currentUser!.displayName);
-                  },
+  joininggroupAsLeader(randomCode, auth.currentUser!.displayName);
+  
+  // Navigate to the '/groupScreen' route and pass 'randomCode' as a parameter
+  Navigator.pushNamed(
+    context,
+    '/groupScreen' // Pass 'randomCode' as an argument
+  );
+},
+
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors
                         .black, // Set the button background color to black

@@ -78,6 +78,9 @@ class GroupScreen extends StatelessWidget {
             }),
             _buildCircularButton(Icons.settings, "Options", Colors.teal, () {
               // Add functionality for Options button here
+              Navigator.pushNamed(context, '/radius_update');
+
+
               print("Options button tapped");
             }),
           ],
