@@ -1,3 +1,4 @@
+import 'package:app/screens/create_announcement.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +117,10 @@ class AnnouncementScreen extends StatelessWidget {
                           backgroundColor: const Color(0xff03dac6),
                           foregroundColor: Colors.black,
                           onPressed: () {
-                            // ...
+                            Navigator.push(context,
+        MaterialPageRoute(
+          // ignore: unnecessary_new
+          builder: (context) => const CreateAnnouncement()));
                           },
                         );
                       }
