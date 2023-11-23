@@ -91,17 +91,22 @@ class AnnouncementScreen extends StatelessWidget {
                   if (snapshot.hasData) {
                     return ListView.builder(
                       shrinkWrap: true,
-                      itemCount: snapshot.data.length,  prototypeItem: ListTile(
-    title: Text(snapshot.data.first),),
+                      itemCount: snapshot.data.length,
+                      prototypeItem: ListTile(
+                        title: Text(snapshot.data.first),
+                      ),
                       itemBuilder: (context, index) {
-                        
-                        return ListTile(
-                          title: Text(snapshot.data[index]),
-                        );
+                        if (snapshot.data.length != 0) {
+                          return ListTile(
+                            title: Text(snapshot.data[index]),
+                          );
+                        } else {
+                          return const Text("");
+                        }
                       },
                     );
                   }
-                    return const Text('');
+                  return const Text('');
                 }),
           ),
 
@@ -117,10 +122,12 @@ class AnnouncementScreen extends StatelessWidget {
                           backgroundColor: const Color(0xff03dac6),
                           foregroundColor: Colors.black,
                           onPressed: () {
-                            Navigator.push(context,
-        MaterialPageRoute(
-          // ignore: unnecessary_new
-          builder: (context) => const CreateAnnouncement()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    // ignore: unnecessary_new
+                                    builder: (context) =>
+                                        const CreateAnnouncement()));
                           },
                         );
                       }

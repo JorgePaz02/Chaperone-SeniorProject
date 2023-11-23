@@ -1,12 +1,29 @@
+import 'package:app/UserInfo/QuitGroupReset.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class GroupScreen extends StatelessWidget {
+String? groupcode = "";
+
+
+class GroupScreen extends StatefulWidget {
   const GroupScreen({Key? key}) : super(key: key);
 
   @override
+  State<StatefulWidget> createState() {
+    return _GroupScreen();
+  }
+}
+
+ bool check = false;
+
+class _GroupScreen extends State<GroupScreen> {
+  
+
+  @override
   Widget build(BuildContext context) {
+    String? user = "";
+   
     final FirebaseAuth auth = FirebaseAuth.instance;
     Future<String> groupName() async {
       return await FirebaseFirestore.instance
@@ -14,13 +31,58 @@ class GroupScreen extends StatelessWidget {
           .doc(auth.currentUser!.displayName)
           .get()
           .then((value) async {
-          return await FirebaseFirestore.instance
-              .collection('Groups')
-              .doc(value.get('group'))
-              .get()
-              .then((value2) {
-            return value2.get('groupname');
+        groupcode = value.get('group');
+        return await FirebaseFirestore.instance
+            .collection('Groups')
+            .doc(value.get('group'))
+            .get()
+            .then((value2) {
+          return value2.get('groupname');
+        });
+      });
+    }
+
+    Future<void> checkifLeader() async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final db = FirebaseFirestore.instance;
+      db
+          .collection('Users')
+          .doc(auth.currentUser!.displayName)
+          .get()
+          .then((value) async {
+        if (value.get("group leader") == true) {
+          setState(() {
+             
+            check = true;
           });
+          
+         
+        } else {
+          setState(() {
+                        
+            check = false;
+          });
+          
+          
+        }
+      });
+    }
+
+    Future<void> quitGroup(String user) async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final db = FirebaseFirestore.instance;
+      db.collection("Users").doc(user).get().then((value) async {
+        String passcode = value.get("group");
+        final docRef = db.collection("Groups").doc(passcode);
+        docRef.update({
+          "members": FieldValue.arrayRemove([auth.currentUser!.displayName]),
+        });
+        final docRef2 =
+            db.collection("Users").doc(auth.currentUser!.displayName);
+        docRef2.update({
+          "group": "",
+          "group leader": false,
+        });
       });
     }
 
@@ -28,8 +90,6 @@ class GroupScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // title: Text("test" + groupname().toString(),
-        //     style: const TextStyle(color: Colors.black)),
         title: FutureBuilder<String>(
             future: groupName(),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -80,6 +140,29 @@ class GroupScreen extends StatelessWidget {
               // Add functionality for Options button here
               print("Options button tapped");
             }),
+            _buildCircularButton(
+              Icons.crisis_alert,
+              "QUIT GROUP",
+              const Color.fromARGB(255, 255, 8, 0),
+              () {
+                checkifLeader();
+
+                Future.delayed(const Duration(milliseconds: 500), () {
+                if (check != true) {
+               
+                  user = auth.currentUser!.displayName;
+                  quitGroup(user!);
+                } else {
+                 
+                  userReset(groupcode!);
+                }
+                });
+                
+                Future.delayed(const Duration(milliseconds: 3000), () {
+                  Navigator.pushNamed(context, "/home");
+                });
+              },
+            )
           ],
         ),
       ),
