@@ -1,4 +1,5 @@
 import 'package:app/screens/announce_screen.dart';
+import 'package:app/screens/itinerary_screen.dart';
 import 'package:app/screens/group_screen.dart';
 import 'package:app/screens/login_screen.dart';
 import 'package:app/screens/message_screen.dart';
@@ -36,7 +37,8 @@ class MyApp extends StatelessWidget {
           '/joinGroup':(context) => JoinGroupScreen(), 
           '/groupScreen': (context) =>  GroupScreen(), 
           '/announceScreen': (context) => const AnnouncementScreen(),
-          "/messageScreen": (context) => const MessageScreen(),             
+          "/messageScreen": (context) => const MessageScreen(),
+          "/itineraryScreen": (context) => const ItineraryScreen(),            
           '/radius_update': (context) => RadiusUpdateScreen(), // Add a route for RadiusUpdateScreen
  },
           

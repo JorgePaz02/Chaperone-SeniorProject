@@ -6,6 +6,7 @@ Future<void> groupSetup(String groupname, int num, String passcode, displayName,
   final db = FirebaseFirestore.instance;
   CollectionReference group = db.collection('Groups');
   var announcements = [];
+  var itinerary = [];
 
   final data = <String, dynamic>{
     "groupname": groupname,
@@ -13,6 +14,7 @@ Future<void> groupSetup(String groupname, int num, String passcode, displayName,
     "passcode": passcode,
     "members": [displayName],
     "announcements": announcements,
+    'itinerary': itinerary,
     "radius": radius, // Add the radius to the group data
   };
 

@@ -8,19 +8,21 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-        void checkGroup() {
+    void checkGroup() {
       FirebaseFirestore.instance
           .collection('Users')
           .doc(auth.currentUser!.displayName)
           .get()
           .then((value) {
-        if (value.get('group') != "") {
-          Navigator.pushNamed(context, '/groupScreen');
-        }
-      });
-    }  checkGroup();
+          if (value.get('group') != "") {
+            Navigator.pushNamed(context, '/groupScreen');
+          }
+          });
+    }
+
+    checkGroup();
+  
     return Scaffold(
-      
       appBar: null,
       body: Stack(
         children: <Widget>[

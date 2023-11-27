@@ -67,9 +67,13 @@ class GroupScreen extends StatelessWidget {
               Navigator.pushNamed(context, '/announceScreen');
               print("Announcements button tapped");
             }),
-            _buildCircularButton(Icons.message, "Messages", Colors.green, () {
-              Navigator.pushNamed(context, "/messageScreen");
+            _buildCircularButton(Icons.access_time, "Itinerary", Colors.green, () {
+              // Add functionality for Messages button here
+              Navigator.pushNamed(context, "/itineraryScreen");
             }),
+            // _buildCircularButton(Icons.message, "Messages", Colors.green, () {
+            //   Navigator.pushNamed(context, "/messageScreen");
+            // }),
             _buildCircularButton(Icons.health_and_safety, "Safety", Colors.red, () {
               print("Safety button tapped");
             }),
@@ -77,7 +81,7 @@ class GroupScreen extends StatelessWidget {
               print("Invitations button tapped");
             }),
             _buildCircularButton(Icons.group, "Member List", Colors.purple, () async {
-              print("Member List button tapped");
+              Navigator.pushNamed(context, "/membersScreen");
 
               String passcode = await getGroupPasscode();
               if (passcode.isNotEmpty) {
