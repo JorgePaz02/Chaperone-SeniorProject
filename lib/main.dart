@@ -2,6 +2,7 @@ import 'package:app/screens/announce_screen.dart';
 import 'package:app/screens/group_screen.dart';
 import 'package:app/screens/login_screen.dart';
 import 'package:app/screens/message_screen.dart';
+import 'package:app/screens/radius_update_screen.dart';
 import 'package:app/screens/register_user.dart';
 import 'package:app/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -27,15 +28,18 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => SplashScreen(),
         '/mainscreen':(context) => const MainScreen(),
-        '/welcome': (context) => const LoginScreen(),
+        '/welcome': (context) => LoginScreen(),
         '/home': (context) => HomeScreen(), // Add a route for HomeScreen
         '/createGroup': (context) => CreateGroupScreen(), // Add Create Group screen route
           //'/groupCreated': (context) => GroupCreatedScreen(), 
           '/Registration': (context) => const Registration(),
           '/joinGroup':(context) => JoinGroupScreen(), 
-          '/groupScreen': (context) => const GroupScreen(), 
+          '/groupScreen': (context) =>  GroupScreen(), 
           '/announceScreen': (context) => const AnnouncementScreen(),
-          "/messageScreen": (context) => const MessageScreen(),      },
+          "/messageScreen": (context) => const MessageScreen(),             
+          '/radius_update': (context) => RadiusUpdateScreen(), // Add a route for RadiusUpdateScreen
+ },
+          
     );
   }
 }
