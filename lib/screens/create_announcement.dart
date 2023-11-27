@@ -58,6 +58,7 @@ class CreateAnnouncementform extends State<CreateAnnouncement> {
               TextButton(
                   onPressed: () {
                     addAnnouncement(announcement.text);
+                    Navigator.pushNamed(context, '/announceScreen');
                   },
                   child: const Text("Add Announcement"))
             ])));

@@ -18,4 +18,15 @@ Future<void> joininggroupAsLeader(passcode, displayName) async {
   docRef3.update({
     "group leader":true, 
   });
+
+
 }
+
+  Future <void> updateRadius(passcode, radius) async{
+    final db = FirebaseFirestore.instance;
+
+  final docRef = db.collection("Groups").doc(passcode);
+  docRef.update({
+      "radius": radius,
+    });
+  }
