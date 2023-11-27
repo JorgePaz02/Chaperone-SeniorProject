@@ -62,6 +62,21 @@ class AnnouncementScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
+          Container(
+            width: double.infinity, // Full width
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[200], // Light gray background color
+              borderRadius: borderRadius2,
+            ),
+            child: const Text(
+              'You joined Group 100!',
+              style: TextStyle(
+                color: Colors.black, // Text color
+                fontSize: 20.0, // Text font size
+              ),
+            ),
+          ),
           // Add any additional content or widgets below the text box
           Container(
             width: double.infinity,
@@ -77,7 +92,7 @@ class AnnouncementScreen extends StatelessWidget {
                     return ListView.builder(
                       shrinkWrap: true,
                       itemCount: snapshot.data.length,  prototypeItem: ListTile(
-                      title: Text(snapshot.data.first),),
+    title: Text(snapshot.data.first),),
                       itemBuilder: (context, index) {
                         
                         return ListTile(
@@ -86,7 +101,7 @@ class AnnouncementScreen extends StatelessWidget {
                       },
                     );
                   }
-                  return const Text('');
+                    return const Text('');
                 }),
           ),
 
