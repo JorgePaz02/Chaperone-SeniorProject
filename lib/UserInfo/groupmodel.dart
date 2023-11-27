@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-final db = FirebaseFirestore.instance;
+
 
 Future<void> groupSetup(String groupname, int num, String passcode, displayName, int radius) async {
   final db = FirebaseFirestore.instance;
@@ -24,3 +24,22 @@ Future<void> groupSetup(String groupname, int num, String passcode, displayName,
   await group.doc(passcode).set(data);
 }
 
+
+
+Future<List<DocumentSnapshot>> getGroupMembersLocations(String groupId) async {
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+
+  try {
+    QuerySnapshot querySnapshot = await db
+        .collection('Groups')
+        .doc(groupId)
+        .collection('locations')
+        .get();
+
+    // Return a list of documents (representing each member's location)
+    return querySnapshot.docs;
+  } catch (e) {
+    print('Error fetching group members locations: $e');
+    return []; // Return an empty list or handle the error accordingly
+  }
+}

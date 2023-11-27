@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           //'/groupCreated': (context) => GroupCreatedScreen(), 
           '/Registration': (context) => const Registration(),
           '/joinGroup':(context) => JoinGroupScreen(), 
-          '/groupScreen': (context) => const GroupScreen(), 
+          '/groupScreen': (context) =>  GroupScreen(), 
           '/announceScreen': (context) => const AnnouncementScreen(),
           "/messageScreen": (context) => const MessageScreen(),             
           '/radius_update': (context) => RadiusUpdateScreen(), // Add a route for RadiusUpdateScreen

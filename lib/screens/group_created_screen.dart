@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:app/screens/create_group_screen.dart';
 import '../UserInfo/joiningGroupmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../UserInfo/getUserLocation.dart';
 
 String generateRandomCode({int length = 6}) {
   final random = Random();
@@ -111,6 +112,7 @@ class GroupCreatedScreen extends State<groupcreated> {
   );
 
   joininggroupAsLeader(randomCode, auth.currentUser!.displayName);
+
   
   // Navigate to the '/groupScreen' route and pass 'randomCode' as a parameter
   Navigator.pushNamed(
