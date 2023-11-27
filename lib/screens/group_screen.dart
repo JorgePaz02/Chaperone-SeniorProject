@@ -2,12 +2,28 @@ import 'package:app/UserInfo/getUserLocation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:async'; // Import dart:async for Timer
 
+class GroupScreen extends StatefulWidget {
+  @override
+  _GroupScreenState createState() => _GroupScreenState();
+}
 
-class GroupScreen extends StatelessWidget {
+class _GroupScreenState extends State<GroupScreen> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
+  late Timer timer;
 
-  GroupScreen({Key? key}) : super(key: key);
+  @override
+  void initState() {
+    super.initState();
+    startFetchingMemberLocations();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel(); // Cancel the timer to prevent memory leaks when the widget is disposed
+    super.dispose();
+  }
 
   Future<String> getGroupPasscode() async {
     try {
@@ -28,27 +44,69 @@ class GroupScreen extends StatelessWidget {
     }
   }
 
-  void fetchGroupMembersWithLocations(String passcode) async {
-    try {
-      List<MemberLocation> membersWithLocations = await getGroupMembersWithLocations(passcode);
-      
+Future<List<MemberLocation>> fetchGroupMembersWithLocations(String passcode) async {
+  try {
+    List<MemberLocation> membersWithLocations = await getGroupMembersWithLocations(passcode);
+    return membersWithLocations;
+  } catch (e) {
+    print('Error fetching group members\' locations: $e');
+    return [];
+  }
+}
+void startFetchingMemberLocations() {
+  const duration = Duration(seconds: 5); // Change this to your desired interval
+  timer = Timer.periodic(duration, (Timer t) async {
+    String passcode = await getGroupPasscode();
+    if (passcode.isNotEmpty) {
+      List<MemberLocation> membersWithLocations = await fetchGroupMembersWithLocations(passcode);
       if (membersWithLocations.isNotEmpty) {
         printMemberLocations(membersWithLocations);
       } else {
         print('No member locations found.');
       }
-    } catch (e) {
-      print('Error fetching group members\' locations: $e');
+    } else {
+      print('Failed to retrieve group passcode.');
     }
-  }
+  });
+}
+
+
+
+
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    Future<String> groupName() async {
+      return await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(auth.currentUser!.displayName)
+          .get()
+          .then((value) async {
+          return await FirebaseFirestore.instance
+              .collection('Groups')
+              .doc(value.get('group'))
+              .get()
+              .then((value2) {
+            return value2.get('groupname');
+          });
+      });
+    }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+     appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Group Name', style: TextStyle(color: Colors.black)),
+        // title: Text("test" + groupname().toString(),
+        //     style: const TextStyle(color: Colors.black)),
+        title: FutureBuilder<String>(
+            future: groupName(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data.toString(),
+                    style: const TextStyle(color: Colors.black));
+              }
+              return const Text('');
+            }),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
