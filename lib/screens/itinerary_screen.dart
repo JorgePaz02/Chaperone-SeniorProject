@@ -1,15 +1,16 @@
-import 'package:app/screens/create_announcement.dart';
+import 'package:app/screens/create_itinerary.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class AnnouncementScreen extends StatelessWidget {
-  const AnnouncementScreen({Key? key}) : super(key: key);
+class ItineraryScreen extends StatelessWidget {
+  const ItineraryScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
-    Future<bool> groupName() async {
+    Future<bool> isLeader() async {
       return await FirebaseFirestore.instance
           .collection('Users')
           .doc(auth.currentUser!.displayName)
@@ -23,7 +24,7 @@ class AnnouncementScreen extends StatelessWidget {
       });
     }
 
-    Future<dynamic> listAnnouncements() async {
+    Future<dynamic> listItinerary() async {
       return await FirebaseFirestore.instance
           .collection('Users')
           .doc(auth.currentUser!.displayName)
@@ -34,7 +35,7 @@ class AnnouncementScreen extends StatelessWidget {
             .doc(value.get('group'))
             .get()
             .then((value2) {
-          return value2.get('announcements');
+          return value2.get('itinerary');
         });
       });
     }
@@ -58,6 +59,23 @@ class AnnouncementScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
+        title: const Row(
+          children: [
+            Icon(
+              Icons.access_time,
+              color: Colors.green
+            ),
+            SizedBox(
+              width: 10
+            ),
+            Text(
+              'Itinerary',
+              style: TextStyle(
+                color: Colors.black
+              )
+            ),
+          ],
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,20 +86,30 @@ class AnnouncementScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.grey[200], // Light gray background color
-              borderRadius: borderRadius2,
             ),
             child: FutureBuilder<dynamic>(
-                future: listAnnouncements(),
+                future: listItinerary(),
                 builder: (BuildContext context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
                       shrinkWrap: true,
-                      itemCount: snapshot.data.length,  prototypeItem: ListTile(
-                      title: Text(snapshot.data.first),),
+                      itemCount: snapshot.data.length,
+                      prototypeItem: ListTile(
+                        title: Text(snapshot.data.first['date_time'].toString() + ' - ' + snapshot.data.first['event'])
+                      ),
                       itemBuilder: (context, index) {
-                        
+                        DateTime timestamp = snapshot.data[index]['date_time'].toDate();
+                        String datetime = DateFormat('dd/MM/yyyy - hh:mm a').format(timestamp);
                         return ListTile(
-                          title: Text(snapshot.data[index]),
+                          title: RichText(
+                            text: TextSpan(
+                              style: DefaultTextStyle.of(context).style,
+                              children: <TextSpan>[
+                                TextSpan(text: datetime, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(text: ': ' + snapshot.data[index]['event']),
+                              ],
+                            ),
+                          ),
                         );
                       },
                     );
@@ -93,7 +121,7 @@ class AnnouncementScreen extends StatelessWidget {
           SizedBox(
               width: 30,
               child: FutureBuilder<dynamic>(
-                  future: groupName(),
+                  future: isLeader(),
                   builder: (BuildContext context, snapshot) {
                     if (snapshot.hasData) {
                       if (snapshot.data == true) {
@@ -103,9 +131,10 @@ class AnnouncementScreen extends StatelessWidget {
                           foregroundColor: Colors.black,
                           onPressed: () {
                             Navigator.push(context,
-        MaterialPageRoute(
-          // ignore: unnecessary_new
-          builder: (context) => const CreateAnnouncement()));
+                              MaterialPageRoute(
+                                builder: (context) => const CreateItinerary()
+                              )
+                            );
                           },
                         );
                       }

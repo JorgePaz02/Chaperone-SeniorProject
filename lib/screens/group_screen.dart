@@ -9,15 +9,18 @@ class GroupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
     Future<String> groupName() async {
-     return await FirebaseFirestore.instance
+      return await FirebaseFirestore.instance
           .collection('Users')
           .doc(auth.currentUser!.displayName)
           .get()
-          .then((value) {
-          if (value.get('group') != "") {
-            return value.get('group');
-          }
-          return '';
+          .then((value) async {
+          return await FirebaseFirestore.instance
+              .collection('Groups')
+              .doc(value.get('group'))
+              .get()
+              .then((value2) {
+            return value2.get('groupname');
+          });
       });
     }
 
@@ -28,13 +31,14 @@ class GroupScreen extends StatelessWidget {
         // title: Text("test" + groupname().toString(),
         //     style: const TextStyle(color: Colors.black)),
         title: FutureBuilder<String>(
-           future: groupName(), 
-           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-               if (snapshot.hasData) {
-                  return Text(snapshot.data.toString(), style: const TextStyle(color: Colors.black));
-               }
-               return const Text('');
-           }),
+            future: groupName(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data.toString(),
+                    style: const TextStyle(color: Colors.black));
+              }
+              return const Text('');
+            }),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -55,9 +59,9 @@ class GroupScreen extends StatelessWidget {
 
               print("Announcements button tapped");
             }),
-            _buildCircularButton(Icons.message, "Messages", Colors.green, () {
+            _buildCircularButton(Icons.access_time, "Itinerary", Colors.green, () {
               // Add functionality for Messages button here
-              Navigator.pushNamed(context, "/messageScreen");
+              Navigator.pushNamed(context, "/itineraryScreen");
             }),
             _buildCircularButton(Icons.health_and_safety, "Safety", Colors.red,
                 () {
@@ -70,7 +74,7 @@ class GroupScreen extends StatelessWidget {
             }),
             _buildCircularButton(Icons.group, "Member List", Colors.purple, () {
               // Add functionality for Member List button here
-              print("Member List button tapped");
+              Navigator.pushNamed(context, "/membersScreen");
             }),
             _buildCircularButton(Icons.settings, "Options", Colors.teal, () {
               // Add functionality for Options button here

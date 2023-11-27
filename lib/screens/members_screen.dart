@@ -1,29 +1,15 @@
-import 'package:app/screens/create_announcement.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class AnnouncementScreen extends StatelessWidget {
-  const AnnouncementScreen({Key? key}) : super(key: key);
+class MembersScreen extends StatelessWidget {
+  const MembersScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
-    Future<bool> groupName() async {
-      return await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-        if (value.get("group leader") == true) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-    }
 
-    Future<dynamic> listAnnouncements() async {
+    Future<dynamic> listMembers() async {
       return await FirebaseFirestore.instance
           .collection('Users')
           .doc(auth.currentUser!.displayName)
@@ -34,12 +20,11 @@ class AnnouncementScreen extends StatelessWidget {
             .doc(value.get('group'))
             .get()
             .then((value2) {
-          return value2.get('announcements');
+          return value2.get('members');
         });
       });
     }
 
-    var data = 'Announcements';
     var borderRadius6 = const BorderRadius.only(
       bottomLeft: Radius.circular(12.0),
       bottomRight: Radius.circular(12.0),
@@ -48,6 +33,7 @@ class AnnouncementScreen extends StatelessWidget {
     var borderRadius4 = borderRadius5;
     var borderRadius3 = borderRadius4;
     var borderRadius2 = borderRadius3;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -58,30 +44,50 @@ class AnnouncementScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
+        title: const Row(
+          children: [
+            Icon(
+              Icons.group,
+              color: Colors.purple
+            ),
+            SizedBox(
+              width: 10
+            ),
+            Text(
+              'Members List',
+              style: TextStyle(
+                color: Colors.black
+              )
+            ),
+          ],
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          // Add any additional content or widgets below the text box
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.grey[200], // Light gray background color
-              borderRadius: borderRadius2,
+              //borderRadius: borderRadius2,
             ),
             child: FutureBuilder<dynamic>(
-                future: listAnnouncements(),
+                future: listMembers(),
                 builder: (BuildContext context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
                       shrinkWrap: true,
-                      itemCount: snapshot.data.length,  prototypeItem: ListTile(
-                      title: Text(snapshot.data.first),),
+                      itemCount: snapshot.data.length,
+                      prototypeItem: ListTile(
+                        title: Text(snapshot.data.first),
+                      ),
                       itemBuilder: (context, index) {
-                        
+                        print(snapshot.data[index]);
                         return ListTile(
-                          title: Text(snapshot.data[index]),
+                          title: Text((index + 1).toString() +
+                              '. ' +
+                              snapshot.data[index]),
                         );
                       },
                     );
@@ -89,29 +95,6 @@ class AnnouncementScreen extends StatelessWidget {
                   return const Text('');
                 }),
           ),
-
-          SizedBox(
-              width: 30,
-              child: FutureBuilder<dynamic>(
-                  future: groupName(),
-                  builder: (BuildContext context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data == true) {
-                        return FloatingActionButton(
-                          child: const Icon(Icons.add),
-                          backgroundColor: const Color(0xff03dac6),
-                          foregroundColor: Colors.black,
-                          onPressed: () {
-                            Navigator.push(context,
-        MaterialPageRoute(
-          // ignore: unnecessary_new
-          builder: (context) => const CreateAnnouncement()));
-                          },
-                        );
-                      }
-                    }
-                    return const Text('');
-                  }))
         ],
       ),
     );

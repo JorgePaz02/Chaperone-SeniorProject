@@ -27,7 +27,7 @@ class Registration extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              "Sign Up",
+              "Please Sign Up",
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
