@@ -39,10 +39,7 @@ class MainScreen extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Registration()),
-                );
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Registration()));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color

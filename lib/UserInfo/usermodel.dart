@@ -14,7 +14,9 @@ Future<void> userSetup(String displayName) async {
     'displayName': displayName,
     'group leader': false,
     'group': "",
+    'position': "",
   };
 
   user.doc(displayName).set(data);
 }
+

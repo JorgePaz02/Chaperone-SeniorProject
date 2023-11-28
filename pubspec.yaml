@@ -15,10 +15,12 @@ dependencies:
   firebase_core: ^2.17.0
   firebase_auth: ^4.10.0
   cloud_firestore: ^4.4.5
+  firebase_messaging: 14.7.5
   json_annotation: ^4.7.0
   video_player: ^2.7.2
   geolocator: ^10.1.0
   google_maps_flutter: ^2.5.0
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
