@@ -91,28 +91,46 @@ class ItineraryScreen extends StatelessWidget {
                 future: listItinerary(),
                 builder: (BuildContext context, snapshot) {
                   if (snapshot.hasData) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data.length,
-                      prototypeItem: ListTile(
-                        title: Text(snapshot.data.first['date_time'].toString() + ' - ' + snapshot.data.first['event'])
-                      ),
-                      itemBuilder: (context, index) {
-                        DateTime timestamp = snapshot.data[index]['date_time'].toDate();
-                        String datetime = DateFormat('dd/MM/yyyy - hh:mm a').format(timestamp);
-                        return ListTile(
-                          title: RichText(
-                            text: TextSpan(
-                              style: DefaultTextStyle.of(context).style,
-                              children: <TextSpan>[
-                                TextSpan(text: datetime, style: const TextStyle(fontWeight: FontWeight.bold)),
-                                TextSpan(text: ': ' + snapshot.data[index]['event']),
-                              ],
+                    if(snapshot.data.length != 0) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.length,
+                        prototypeItem: ListTile(
+                          title: Text(snapshot.data.first['date_time'].toString() + ' - ' + snapshot.data.first['event'])
+                        ),
+                        itemBuilder: (context, index) {
+                          DateTime timestamp = snapshot.data[index]['date_time'].toDate();
+                          String datetime = DateFormat('dd/MM/yyyy - hh:mm a').format(timestamp);
+                          return ListTile(
+                            title: RichText(
+                              text: TextSpan(
+                                style: DefaultTextStyle.of(context).style,
+                                children: <TextSpan>[
+                                  TextSpan(text: datetime, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  TextSpan(text: ': ' + snapshot.data[index]['event']),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
+                          );
+                        },
+                      );
+                    }
+                    else {
+                      return FutureBuilder<dynamic>(
+                        future: isLeader(),
+                        builder: (BuildContext context, snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data == true) {
+                              return const Text('Nothing here yet. Make a new event!');
+                            }
+                            else {
+                              return const Text('Nothing here yet. Check back soon for upcoming events!');
+                            }
+                          }
+                          return const Text('');
+                        }
+                      );
+                    }
                   }
                   return const Text('');
                 }),

@@ -76,21 +76,25 @@ class MembersScreen extends StatelessWidget {
                 future: listMembers(),
                 builder: (BuildContext context, snapshot) {
                   if (snapshot.hasData) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data.length,
-                      prototypeItem: ListTile(
-                        title: Text(snapshot.data.first),
-                      ),
-                      itemBuilder: (context, index) {
-                        print(snapshot.data[index]);
-                        return ListTile(
-                          title: Text((index + 1).toString() +
-                              '. ' +
-                              snapshot.data[index]),
-                        );
-                      },
-                    );
+                    if (snapshot.data.length != 0) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.length,
+                        prototypeItem: ListTile(
+                          title: Text(snapshot.data.first),
+                        ),
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text((index + 1).toString() +
+                                '. ' +
+                                snapshot.data[index]),
+                          );
+                        },
+                      );
+                    }
+                    else {
+                      return const Text('How is this possible...?');
+                    }
                   }
                   return const Text('');
                 }),

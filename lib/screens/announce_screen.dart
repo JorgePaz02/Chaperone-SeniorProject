@@ -9,7 +9,7 @@ class AnnouncementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
-    Future<bool> groupName() async {
+    Future<bool> isLeader() async {
       return await FirebaseFirestore.instance
           .collection('Users')
           .doc(auth.currentUser!.displayName)
@@ -89,44 +89,69 @@ class AnnouncementScreen extends StatelessWidget {
                 future: listAnnouncements(),
                 builder: (BuildContext context, snapshot) {
                   if (snapshot.hasData) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data.length,  prototypeItem: ListTile(
-    title: Text(snapshot.data.first),),
-                      itemBuilder: (context, index) {
-                        
-                        return ListTile(
-                          title: Text(snapshot.data[index]),
-                        );
-                      },
-                    );
+                    if (snapshot.data.length != 0) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data.length,
+                        prototypeItem: ListTile(
+                          title: Text(snapshot.data.first),
+                        ),
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(snapshot.data[index]),
+                          );
+                        },
+                      );
+                    }
+                    else {
+                      return FutureBuilder<dynamic>(
+                        future: isLeader(),
+                        builder: (BuildContext context, snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data == true) {
+                              return const Text('Nothing here yet. Make a new annoucement!');
+                            }
+                            else {
+                              return const Text('Nothing here yet. Check back soon for upcoming annoucements!');
+                            }
+                          }
+                          return const Text('');
+                        }
+                      );
+                    }
                   }
-                    return const Text('');
+                  return const Text('');
                 }),
           ),
 
           SizedBox(
-              width: 30,
-              child: FutureBuilder<dynamic>(
-                  future: groupName(),
-                  builder: (BuildContext context, snapshot) {
-                    if (snapshot.hasData) {
-                      if (snapshot.data == true) {
-                        return FloatingActionButton(
-                          child: const Icon(Icons.add),
-                          backgroundColor: const Color(0xff03dac6),
-                          foregroundColor: Colors.black,
-                          onPressed: () {
-                            Navigator.push(context,
-        MaterialPageRoute(
-          // ignore: unnecessary_new
-          builder: (context) => const CreateAnnouncement()));
-                          },
+            width: 30,
+            child: FutureBuilder<dynamic>(
+              future: isLeader(),
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data == true) {
+                    return FloatingActionButton(
+                      child: const Icon(Icons.add),
+                      backgroundColor: const Color(0xff03dac6),
+                      foregroundColor: Colors.black,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            // ignore: unnecessary_new
+                            builder: (context) =>
+                            const CreateAnnouncement()
+                          )
                         );
-                      }
-                    }
-                    return const Text('');
-                  }))
+                      },
+                    );
+                  }
+                }
+                return const Text('');
+              }
+            )
+          )
         ],
       ),
     );

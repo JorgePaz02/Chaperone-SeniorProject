@@ -1,14 +1,19 @@
+import 'package:app/UserInfo/QuitGroupReset.dart';
 import 'package:app/UserInfo/getUserLocation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async'; // Import dart:async for Timer
 
+String? groupcode = "";
+  
 class GroupScreen extends StatefulWidget {
   @override
   _GroupScreenState createState() => _GroupScreenState();
 }
 
+     bool check = false;
+    
 class _GroupScreenState extends State<GroupScreen> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   late Timer timer;
@@ -73,6 +78,7 @@ void startFetchingMemberLocations() {
 
 
 
+
     final FirebaseAuth auth = FirebaseAuth.instance;
     Future<String> groupName() async {
       return await FirebaseFirestore.instance
@@ -80,24 +86,68 @@ void startFetchingMemberLocations() {
           .doc(auth.currentUser!.displayName)
           .get()
           .then((value) async {
-          return await FirebaseFirestore.instance
-              .collection('Groups')
-              .doc(value.get('group'))
-              .get()
-              .then((value2) {
-            return value2.get('groupname');
+        groupcode = value.get('group');
+        return await FirebaseFirestore.instance
+            .collection('Groups')
+            .doc(value.get('group'))
+            .get()
+            .then((value2) {
+          return value2.get('groupname');
+        });
+      });
+    }
+
+    Future<void> checkifLeader() async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final db = FirebaseFirestore.instance;
+      db
+          .collection('Users')
+          .doc(auth.currentUser!.displayName)
+          .get()
+          .then((value) async {
+        if (value.get("group leader") == true) {
+          setState(() {
+             
+            check = true;
           });
+          
+         
+        } else {
+          setState(() {
+                        
+            check = false;
+          });
+          
+          
+        }
+      });
+    }
+
+    Future<void> quitGroup(String user) async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final db = FirebaseFirestore.instance;
+      db.collection("Users").doc(user).get().then((value) async {
+        String passcode = value.get("group");
+        final docRef = db.collection("Groups").doc(passcode);
+        docRef.update({
+          "members": FieldValue.arrayRemove([auth.currentUser!.displayName]),
+        });
+        final docRef2 =
+            db.collection("Users").doc(auth.currentUser!.displayName);
+        docRef2.update({
+          "group": "",
+          "group leader": false,
+        });
       });
     }
 
   @override
   Widget build(BuildContext context) {
+    String? user = "";
     return Scaffold(
      appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // title: Text("test" + groupname().toString(),
-        //     style: const TextStyle(color: Colors.black)),
         title: FutureBuilder<String>(
             future: groupName(),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -152,6 +202,29 @@ void startFetchingMemberLocations() {
               Navigator.pushNamed(context, '/radius_update');
               print("Options button tapped");
             }),
+            _buildCircularButton(
+              Icons.crisis_alert,
+              "QUIT GROUP",
+              const Color.fromARGB(255, 255, 8, 0),
+              () {
+                checkifLeader();
+
+                Future.delayed(const Duration(milliseconds: 500), () {
+                if (check != true) {
+               
+                  user = auth.currentUser!.displayName;
+                  quitGroup(user!);
+                } else {
+                 
+                  userReset(groupcode!);
+                }
+                });
+                
+                Future.delayed(const Duration(milliseconds: 3000), () {
+                  Navigator.pushNamed(context, "/home");
+                });
+              },
+            )
           ],
         ),
       ),
