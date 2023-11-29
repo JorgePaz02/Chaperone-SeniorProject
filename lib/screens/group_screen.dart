@@ -12,7 +12,7 @@ class GroupScreen extends StatefulWidget {
   _GroupScreenState createState() => _GroupScreenState();
 }
 
-     bool check = false;
+  bool check = false;
     
 class _GroupScreenState extends State<GroupScreen> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -179,9 +179,9 @@ void startFetchingMemberLocations() {
               // Add functionality for Messages button here
               Navigator.pushNamed(context, "/itineraryScreen");
             }),
-            // _buildCircularButton(Icons.message, "Messages", Colors.green, () {
-            //   Navigator.pushNamed(context, "/messageScreen");
-            // }),
+            _buildCircularButton(Icons.message, "Messages", Colors.green, () {
+              Navigator.pushNamed(context, "/messageScreen");
+            }),
             _buildCircularButton(Icons.health_and_safety, "Safety", Colors.red, () {
               print("Safety button tapped");
             }),
@@ -208,20 +208,41 @@ void startFetchingMemberLocations() {
               const Color.fromARGB(255, 255, 8, 0),
               () {
                 checkifLeader();
-
                 Future.delayed(const Duration(milliseconds: 500), () {
-                if (check != true) {
-               
-                  user = auth.currentUser!.displayName;
-                  quitGroup(user!);
-                } else {
-                 
-                  userReset(groupcode!);
-                }
-                });
-                
-                Future.delayed(const Duration(milliseconds: 3000), () {
-                  Navigator.pushNamed(context, "/home");
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Quitting?'),
+                      content: Text(
+                        check ?
+                        'If you quit, the entire group will be deleted! Are you sure you want to quit?'
+                        :
+                        'If you quit, you will no longer participate in this group! Are you sure you want to quit?'
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            if (check) {
+                              userReset(groupcode!);
+                            } else {
+                              user = auth.currentUser!.displayName;
+                              quitGroup(user!);
+                            }
+                            Future.delayed(
+                              const Duration(milliseconds: 3000), () {
+                                Navigator.pushNamed(context, "/home");
+                              }
+                            );
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
                 });
               },
             )

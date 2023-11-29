@@ -111,6 +111,10 @@ class ItineraryScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
+                            trailing: const Icon(
+                              Icons.cancel,
+                              color: Colors.red
+                            ),
                           );
                         },
                       );
