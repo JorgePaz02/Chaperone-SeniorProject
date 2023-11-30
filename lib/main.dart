@@ -12,6 +12,7 @@ import 'screens/home_screen.dart';
 import 'screens/join_group.dart';
 import 'screens/main_screen.dart';
 import 'screens/create_group_screen.dart';
+import 'screens/members_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,8 @@ class MyApp extends StatelessWidget {
           '/groupScreen': (context) =>  GroupScreen(), 
           '/announceScreen': (context) => const AnnouncementScreen(),
           "/messageScreen": (context) => const MessageScreen(),
-          "/itineraryScreen": (context) => const ItineraryScreen(),            
+          "/itineraryScreen": (context) => const ItineraryScreen(),       
+          "/membersScreen": (context) => const MembersScreen(),       
           '/radius_update': (context) => RadiusUpdateScreen(), // Add a route for RadiusUpdateScreen
  },
           
