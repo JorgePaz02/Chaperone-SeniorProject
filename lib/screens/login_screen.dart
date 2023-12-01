@@ -1,8 +1,9 @@
+import 'package:app/NotificationServices/notifi_service.dart';
 import 'package:app/UserInfo/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-  // Import the file containing the startLocationUpdates function
+// Import the file containing the startLocationUpdates function
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -19,12 +20,11 @@ class LoginScreen extends StatelessWidget {
 
       // Call the startLocationUpdates function when the user logs in
       startLocationUpdates(emailController.text);
-
+      NotificationService()
+          .showNotification(title: "Sample", body: "It works");
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen())
-        ,
-        
+        MaterialPageRoute(builder: (context) => HomeScreen()),
       );
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'An error occurred';
@@ -96,7 +96,8 @@ class LoginScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.black, // Text color
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 textStyle: const TextStyle(
                   fontSize: 18,
                 ),
