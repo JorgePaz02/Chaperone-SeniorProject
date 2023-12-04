@@ -20,8 +20,6 @@ class LoginScreen extends StatelessWidget {
 
       // Call the startLocationUpdates function when the user logs in
       startLocationUpdates(emailController.text);
-      NotificationService()
-          .showNotification(title: "Sample", body: "It works");
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),

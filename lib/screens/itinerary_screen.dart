@@ -4,8 +4,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ItineraryScreen extends StatelessWidget {
+
+class ItineraryScreen extends StatefulWidget {
   const ItineraryScreen({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ItineraryScreen();
+  }
+}
+
+class _ItineraryScreen extends State<ItineraryScreen> {
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +68,14 @@ class ItineraryScreen extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-        ),
+        ),        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.black),
+            onPressed: () {
+              setState(() {});
+            },
+          ),
+        ],
         title: const Row(
           children: [
             Icon(

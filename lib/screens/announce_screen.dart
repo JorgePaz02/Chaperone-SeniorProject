@@ -3,9 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class AnnouncementScreen extends StatelessWidget {
-  const AnnouncementScreen({Key? key}) : super(key: key);
 
+class AnnouncementScreen extends StatefulWidget {
+  const AnnouncementScreen({Key? key}) : super(key: key);
+  @override
+  State<StatefulWidget> createState() {
+    return _AnnouncementScreen();}
+}
+class _AnnouncementScreen extends State<AnnouncementScreen> {
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
@@ -58,6 +63,14 @@ class AnnouncementScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.black),
+            onPressed: () {
+              setState(() {});
+            },
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -102,22 +115,21 @@ class AnnouncementScreen extends StatelessWidget {
                           );
                         },
                       );
-                    }
-                    else {
+                    } else {
                       return FutureBuilder<dynamic>(
-                        future: isLeader(),
-                        builder: (BuildContext context, snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data == true) {
-                              return const Text('Nothing here yet. Make a new annoucement!');
+                          future: isLeader(),
+                          builder: (BuildContext context, snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data == true) {
+                                return const Text(
+                                    'Nothing here yet. Make a new annoucement!');
+                              } else {
+                                return const Text(
+                                    'Nothing here yet. Check back soon for upcoming annoucements!');
+                              }
                             }
-                            else {
-                              return const Text('Nothing here yet. Check back soon for upcoming annoucements!');
-                            }
-                          }
-                          return const Text('');
-                        }
-                      );
+                            return const Text('');
+                          });
                     }
                   }
                   return const Text('');
@@ -125,33 +137,29 @@ class AnnouncementScreen extends StatelessWidget {
           ),
 
           SizedBox(
-            width: 30,
-            child: FutureBuilder<dynamic>(
-              future: isLeader(),
-              builder: (BuildContext context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data == true) {
-                    return FloatingActionButton(
-                      child: const Icon(Icons.add),
-                      backgroundColor: const Color(0xff03dac6),
-                      foregroundColor: Colors.black,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            // ignore: unnecessary_new
-                            builder: (context) =>
-                            const CreateAnnouncement()
-                          )
+              width: 30,
+              child: FutureBuilder<dynamic>(
+                  future: isLeader(),
+                  builder: (BuildContext context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data == true) {
+                        return FloatingActionButton(
+                          child: const Icon(Icons.add),
+                          backgroundColor: const Color(0xff03dac6),
+                          foregroundColor: Colors.black,
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    // ignore: unnecessary_new
+                                    builder: (context) =>
+                                        const CreateAnnouncement()));
+                          },
                         );
-                      },
-                    );
-                  }
-                }
-                return const Text('');
-              }
-            )
-          )
+                      }
+                    }
+                    return const Text('');
+                  }))
         ],
       ),
     );
