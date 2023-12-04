@@ -1,5 +1,6 @@
 import 'package:app/UserInfo/QuitGroupReset.dart';
 import 'package:app/UserInfo/getUserLocation.dart';
+import 'package:app/UserInfo/distanceComparison.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void initState() {
     super.initState();
-    startFetchingMemberLocations();
+    startFetchingMemberLocations(context);
   }
 
   @override
@@ -48,6 +49,21 @@ class _GroupScreenState extends State<GroupScreen> {
       return ''; // Return an empty string or handle the error accordingly
     }
   }
+   Future<int> getRadius() async {
+      return await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(auth.currentUser!.displayName)
+          .get()
+          .then((value) async {
+          return await FirebaseFirestore.instance
+              .collection('Groups')
+              .doc(value.get('group'))
+              .get()
+              .then((value2) {
+            return value2.get('radius');
+          });
+      });
+    }
 
 Future<List<MemberLocation>> fetchGroupMembersWithLocations(String passcode) async {
   try {
@@ -58,14 +74,16 @@ Future<List<MemberLocation>> fetchGroupMembersWithLocations(String passcode) asy
     return [];
   }
 }
-void startFetchingMemberLocations() {
+void startFetchingMemberLocations(BuildContext context) {
   const duration = Duration(seconds: 5); // Change this to your desired interval
   timer = Timer.periodic(duration, (Timer t) async {
     String passcode = await getGroupPasscode();
+    int radius = await getRadius();
     if (passcode.isNotEmpty) {
       List<MemberLocation> membersWithLocations = await fetchGroupMembersWithLocations(passcode);
       if (membersWithLocations.isNotEmpty) {
         printMemberLocations(membersWithLocations);
+        checkUserDistances(context, membersWithLocations, radius); // Pass BuildContext here
       } else {
         print('No member locations found.');
       }
