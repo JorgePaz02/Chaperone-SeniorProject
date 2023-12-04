@@ -1,3 +1,4 @@
+import 'package:app/UserInfo/distanceComparison.dart';
 import 'package:app/UserInfo/getUserLocation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,11 +14,14 @@ class _GroupScreenState extends State<GroupScreen> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   late Timer timer;
 
-  @override
-  void initState() {
-    super.initState();
-    startFetchingMemberLocations();
-  }
+@override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance?.addPostFrameCallback((_) {
+    startFetchingMemberLocations(context);
+  });
+}
+
 
   @override
   void dispose() {
@@ -44,6 +48,8 @@ class _GroupScreenState extends State<GroupScreen> {
     }
   }
 
+
+
 Future<List<MemberLocation>> fetchGroupMembersWithLocations(String passcode) async {
   try {
     List<MemberLocation> membersWithLocations = await getGroupMembersWithLocations(passcode);
@@ -53,14 +59,17 @@ Future<List<MemberLocation>> fetchGroupMembersWithLocations(String passcode) asy
     return [];
   }
 }
-void startFetchingMemberLocations() {
+
+void startFetchingMemberLocations(BuildContext context) {
   const duration = Duration(seconds: 5); // Change this to your desired interval
   timer = Timer.periodic(duration, (Timer t) async {
     String passcode = await getGroupPasscode();
+    int radius = await getRadius();
     if (passcode.isNotEmpty) {
       List<MemberLocation> membersWithLocations = await fetchGroupMembersWithLocations(passcode);
       if (membersWithLocations.isNotEmpty) {
         printMemberLocations(membersWithLocations);
+        checkUserDistances(context, membersWithLocations, radius); // Pass BuildContext here
       } else {
         print('No member locations found.');
       }
@@ -69,9 +78,6 @@ void startFetchingMemberLocations() {
     }
   });
 }
-
-
-
 
     final FirebaseAuth auth = FirebaseAuth.instance;
     Future<String> groupName() async {
@@ -90,14 +96,28 @@ void startFetchingMemberLocations() {
       });
     }
 
+    Future<int> getRadius() async {
+      return await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(auth.currentUser!.displayName)
+          .get()
+          .then((value) async {
+          return await FirebaseFirestore.instance
+              .collection('Groups')
+              .doc(value.get('group'))
+              .get()
+              .then((value2) {
+            return value2.get('radius');
+          });
+      });
+    }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
      appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // title: Text("test" + groupname().toString(),
-        //     style: const TextStyle(color: Colors.black)),
         title: FutureBuilder<String>(
             future: groupName(),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -131,18 +151,12 @@ void startFetchingMemberLocations() {
             _buildCircularButton(Icons.health_and_safety, "Safety", Colors.red, () {
               print("Safety button tapped");
             }),
-            _buildCircularButton(Icons.mail, "Invitations", Colors.orange, () {
-              print("Invitations button tapped");
+            _buildCircularButton(Icons.access_time, "Itinerary", Colors.green, () {             
+               Navigator.pushNamed(context, "/itineraryScreen");
             }),
             _buildCircularButton(Icons.group, "Member List", Colors.purple, () async {
               print("Member List button tapped");
-
-              String passcode = await getGroupPasscode();
-              if (passcode.isNotEmpty) {
-                fetchGroupMembersWithLocations(passcode);
-              } else {
-                print('Failed to retrieve group passcode.');
-              }
+              Navigator.pushNamed(context, "/membersScreen");
             }),
             _buildCircularButton(Icons.settings, "Options", Colors.teal, () {
               Navigator.pushNamed(context, '/radius_update');
