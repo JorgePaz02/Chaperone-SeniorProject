@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 Future<void> groupSetup(String groupname, int num, String passcode, displayName, int radius) async {
   final db = FirebaseFirestore.instance;
   CollectionReference group = db.collection('Groups');
-  var announcements = ["Welcome, "+groupname];
+  var announcements = [];
   var itinerary = [];
 
   final data = <String, dynamic>{
