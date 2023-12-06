@@ -1,10 +1,17 @@
-import 'package:app/screens/create_announcement.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class AnnouncementScreen extends StatelessWidget {
-  const AnnouncementScreen({Key? key}) : super(key: key);
+class AnnouncementScreen extends StatefulWidget {
+  AnnouncementScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AnnouncementScreen> createState() => _AnnouncementScreenState();
+}
+
+class _AnnouncementScreenState extends State<AnnouncementScreen> {
+  final TextEditingController announcementController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +46,25 @@ class AnnouncementScreen extends StatelessWidget {
       });
     }
 
+    Future<void> addAnnouncement(Map<String, Object> X) async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final db = FirebaseFirestore.instance;
+        db
+        .collection("Users")
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then((value) async {
+          String passcode = value.get("group");
+          final docRef = db.collection("Groups").doc(passcode);
+          docRef.update(
+          {
+            "announcements": FieldValue.arrayUnion([X]),
+          }            
+          );
+        }
+      );
+    }
+
     var data = 'Announcements';
     var borderRadius6 = const BorderRadius.only(
       bottomLeft: Radius.circular(12.0),
@@ -58,32 +84,42 @@ class AnnouncementScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
+        title: const Row(
+          children: [
+            Icon(
+              Icons.announcement,
+              color: Colors.blue
+            ),
+            SizedBox(
+              width: 10
+            ),
+            Text(
+              'Announcements',
+              style: TextStyle(
+                color: Colors.black
+              )
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {
+              
+            },
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-            width: double.infinity, // Full width
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Colors.grey[200], // Light gray background color
-              borderRadius: borderRadius2,
-            ),
-            child: const Text(
-              'You joined Group 100!',
-              style: TextStyle(
-                color: Colors.black, // Text color
-                fontSize: 20.0, // Text font size
-              ),
-            ),
-          ),
           // Add any additional content or widgets below the text box
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.grey[200], // Light gray background color
-              borderRadius: borderRadius2,
+              // borderRadius: borderRadius2,
             ),
             child: FutureBuilder<dynamic>(
                 future: listAnnouncements(),
@@ -94,11 +130,14 @@ class AnnouncementScreen extends StatelessWidget {
                         shrinkWrap: true,
                         itemCount: snapshot.data.length,
                         prototypeItem: ListTile(
-                          title: Text(snapshot.data.first),
+                          title: Text(snapshot.data.first['announcement']),
                         ),
                         itemBuilder: (context, index) {
+                          DateTime timestamp = snapshot.data[index]['date_time'].toDate();
+                          String datetime = DateFormat('dd/MM/yyyy - hh:mm a').format(timestamp);
                           return ListTile(
-                            title: Text(snapshot.data[index]),
+                            title: Text(snapshot.data[index]['announcement']),
+                            trailing: Text(datetime)
                           );
                         },
                       );
@@ -123,28 +162,71 @@ class AnnouncementScreen extends StatelessWidget {
                   return const Text('');
                 }),
           ),
-
+          const Padding(
+            padding: EdgeInsets.all(10.0),
+          ),
           SizedBox(
-            width: 30,
             child: FutureBuilder<dynamic>(
               future: isLeader(),
               builder: (BuildContext context, snapshot) {
                 if (snapshot.hasData) {
                   if (snapshot.data == true) {
-                    return FloatingActionButton(
-                      child: const Icon(Icons.add),
-                      backgroundColor: const Color(0xff03dac6),
-                      foregroundColor: Colors.black,
+                    return ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            // ignore: unnecessary_new
-                            builder: (context) =>
-                            const CreateAnnouncement()
-                          )
+                        showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text('Make Annoucement'),
+                            content: SizedBox(
+                              width: double.maxFinite,
+                              child: TextField(
+                                controller: announcementController,
+                                decoration: const InputDecoration(
+                                  labelText: "Announcement",
+                                  border: OutlineInputBorder(),
+                                ),
+                                maxLines: null,
+                              ),
+                            ),      
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  DateTime datetime = DateTime.now();
+                                  addAnnouncement({'announcement': announcementController.text, 'date_time': Timestamp.fromDate(
+                                    DateTime(
+                                        datetime.year,
+                                        datetime.month,
+                                        datetime.day,
+                                        datetime.hour,
+                                        datetime.minute,
+                                      )
+                                    )});
+                                  Navigator.pop(context);
+                                  announcementController.text = '';
+                                  setState(() {});
+                                },
+                                child: const Text('Submit'),
+                              ),
+                            ],
+                          ),
                         );
                       },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.black, // Text color
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 16
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      child: const Text("Create New Announcement"),
                     );
                   }
                 }
