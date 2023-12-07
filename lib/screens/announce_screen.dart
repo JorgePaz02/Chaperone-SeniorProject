@@ -65,6 +65,25 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
       );
     }
 
+    Future<void> deleteAnnouncement(Map<String, Object> X) async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final db = FirebaseFirestore.instance;
+        db
+        .collection("Users")
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then((value) async {
+          String passcode = value.get("group");
+          final docRef = db.collection("Groups").doc(passcode);
+          docRef.update(
+          {
+            "announcements": FieldValue.arrayRemove([X]),
+          }            
+          );
+        }
+      );
+    }
+
     var data = 'Announcements';
     var borderRadius6 = const BorderRadius.only(
       bottomLeft: Radius.circular(12.0),

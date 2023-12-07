@@ -2,6 +2,8 @@ import 'package:app/NotificationServices/notifi_service.dart';
 import 'package:app/UserInfo/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
+import 'group_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // Import the file containing the startLocationUpdates function
 
@@ -10,6 +12,19 @@ class LoginScreen extends StatelessWidget {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  Future<bool> inGroup() async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final db = FirebaseFirestore.instance;
+      return await db
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then((value) async {
+          return value.get("group") != "";
+        }
+      );
+    }
 
   Future<void> _login(BuildContext context) async {
     try {
@@ -20,12 +35,18 @@ class LoginScreen extends StatelessWidget {
 
       // Call the startLocationUpdates function when the user logs in
       startLocationUpdates(emailController.text);
-      NotificationService()
-          .showNotification(title: "Sample", body: "It works");
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
+
+
+      await inGroup().then((value) async {
+        if(value) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => GroupScreen()));
+        }
+        else {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        }
+      });
+
+
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'An error occurred';
       if (e.code == 'user-not-found') {
