@@ -153,16 +153,11 @@ void startFetchingMemberLocations() {
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               if (snapshot.hasData) {
                 return Text(snapshot.data.toString(),
-                    style: const TextStyle(color: Colors.black));
+                  style: const TextStyle(color: Colors.black));
               }
               return const Text('');
-            }),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+            }
+          ),
       ),
       body: Center(
         child: GridView.count(
