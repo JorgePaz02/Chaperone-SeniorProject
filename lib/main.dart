@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           '/Registration': (context) => const Registration(),
           '/joinGroup':(context) => JoinGroupScreen(), 
           '/groupScreen': (context) =>  GroupScreen(), 
-          '/announceScreen': (context) => const AnnouncementScreen(),
+          '/announceScreen': (context) => AnnouncementScreen(),
           "/messageScreen": (context) => const MessageScreen(),
           "/itineraryScreen": (context) => const ItineraryScreen(),       
           "/membersScreen": (context) => const MembersScreen(),       

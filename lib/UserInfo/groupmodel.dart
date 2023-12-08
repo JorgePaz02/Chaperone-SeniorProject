@@ -4,7 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 Future<void> groupSetup(String groupname, int num, String passcode, displayName, int radius) async {
   final db = FirebaseFirestore.instance;
   CollectionReference group = db.collection('Groups');
-  var announcements = ["Welcome, "+groupname];
+  var announcements = [
+    {
+      'announcement': "$groupname has been created!",
+      'description': "A new group, $groupname, has been made... and you're in! Hopefully, you and everyone else will have a fun time here.",
+      'date_time': Timestamp.fromDate(DateTime.now())
+    }
+  ];
   var messages = ["Welcome, "+groupname];
   var itinerary = [];
 
@@ -12,7 +18,7 @@ Future<void> groupSetup(String groupname, int num, String passcode, displayName,
     "groupname": groupname,
     "number of members": num,
     "passcode": passcode,
-    "members": [displayName],
+    "members": [],
     "announcements": announcements,
     'itinerary': itinerary,
     "radius": radius, // Add the radius to the group data

@@ -141,10 +141,10 @@ void startFetchingMemberLocations(BuildContext context) {
       });
     }
 
-    Future<void> quitGroup(String user) async {
+    Future<void> quitGroup(Map<String, String> X) async {
       final FirebaseAuth auth = FirebaseAuth.instance;
       final db = FirebaseFirestore.instance;
-      db.collection("Users").doc(user).get().then((value) async {
+      db.collection("Users").doc(X['name']).get().then((value) async {
         String passcode = value.get("group");
         final docRef = db.collection("Groups").doc(passcode);
         docRef.update({
@@ -171,16 +171,11 @@ void startFetchingMemberLocations(BuildContext context) {
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               if (snapshot.hasData) {
                 return Text(snapshot.data.toString(),
-                    style: const TextStyle(color: Colors.black));
+                  style: const TextStyle(color: Colors.black));
               }
               return const Text('');
-            }),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+            }
+          ),
       ),
       body: Center(
         child: GridView.count(
@@ -248,7 +243,10 @@ void startFetchingMemberLocations(BuildContext context) {
                               userReset(groupcode!);
                             } else {
                               user = auth.currentUser!.displayName;
-                              quitGroup(user!);
+                            
+                              quitGroup({
+                                'name': user!
+                            });
                             }
                             Future.delayed(
                               const Duration(milliseconds: 3000), () {
