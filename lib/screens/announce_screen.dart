@@ -12,6 +12,7 @@ class AnnouncementScreen extends StatefulWidget {
 
 class _AnnouncementScreenState extends State<AnnouncementScreen> {
   final TextEditingController announcementController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -84,21 +85,15 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
       );
     }
 
-    var data = 'Announcements';
-    var borderRadius6 = const BorderRadius.only(
-      bottomLeft: Radius.circular(12.0),
-      bottomRight: Radius.circular(12.0),
-    );
-    var borderRadius5 = borderRadius6;
-    var borderRadius4 = borderRadius5;
-    var borderRadius3 = borderRadius4;
-    var borderRadius2 = borderRadius3;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.grey[200],
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -122,138 +117,287 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.shopping_cart),
+            icon: const Icon(
+              Icons.refresh,
+              color: Colors.black,
+            ),
             onPressed: () {
-              
+              setState(() {});
             },
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          // Add any additional content or widgets below the text box
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Colors.grey[200], // Light gray background color
-              // borderRadius: borderRadius2,
-            ),
-            child: FutureBuilder<dynamic>(
-                future: listAnnouncements(),
-                builder: (BuildContext context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data.length != 0) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data.length,
-                        prototypeItem: ListTile(
-                          title: Text(snapshot.data.first['announcement']),
+      body:
+      Align(
+        alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            FutureBuilder<dynamic>(
+              future: listAnnouncements(),
+              builder: (BuildContext context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const CircularProgressIndicator();
+                  default:
+                    if (snapshot.hasError) {
+                      return Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle (
+                          color: Colors.red,
                         ),
-                        itemBuilder: (context, index) {
-                          DateTime timestamp = snapshot.data[index]['date_time'].toDate();
-                          String datetime = DateFormat('dd/MM/yyyy - hh:mm a').format(timestamp);
-                          return ListTile(
-                            title: Text(snapshot.data[index]['announcement']),
-                            trailing: Text(datetime)
-                          );
-                        },
                       );
                     }
                     else {
-                      return FutureBuilder<dynamic>(
-                        future: isLeader(),
-                        builder: (BuildContext context, snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data == true) {
-                              return const Text('Nothing here yet. Make a new annoucement!');
-                            }
-                            else {
-                              return const Text('Nothing here yet. Check back soon for upcoming annoucements!');
-                            }
-                          }
-                          return const Text('');
-                        }
-                      );
-                    }
-                  }
-                  return const Text('');
-                }),
-          ),
-          const Padding(
-            padding: EdgeInsets.all(10.0),
-          ),
-          SizedBox(
-            child: FutureBuilder<dynamic>(
-              future: isLeader(),
-              builder: (BuildContext context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data == true) {
-                    return ElevatedButton(
-                      onPressed: () {
-                        showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            title: const Text('Make Annoucement'),
-                            content: SizedBox(
-                              width: double.maxFinite,
-                              child: TextField(
-                                controller: announcementController,
-                                decoration: const InputDecoration(
-                                  labelText: "Announcement",
-                                  border: OutlineInputBorder(),
+                      if (snapshot.hasData) {
+                        if (snapshot.data.length != 0) {
+                            return Flexible (
+                              child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              DateTime timestamp = snapshot.data[index]['date_time'].toDate();
+                              String datetime = DateFormat('dd/MM/yyyy - hh:mm a').format(timestamp);
+                              return Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    top: const BorderSide(color: Colors.grey),
+                                    bottom: BorderSide(color: index < snapshot.data.length - 1 ? Colors.transparent : Colors.grey),
+                                  ),
                                 ),
-                                maxLines: null,
-                              ),
-                            ),      
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  DateTime datetime = DateTime.now();
-                                  addAnnouncement({'announcement': announcementController.text, 'date_time': Timestamp.fromDate(
-                                    DateTime(
-                                        datetime.year,
-                                        datetime.month,
-                                        datetime.day,
-                                        datetime.hour,
-                                        datetime.minute,
-                                      )
-                                    )});
-                                  Navigator.pop(context);
-                                  announcementController.text = '';
-                                  setState(() {});
-                                },
-                                child: const Text('Submit'),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.black, // Text color
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 16
-                        ),
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                      child: const Text("Create New Announcement"),
-                    );
+                                child: Row(
+                                  children: <Widget> [
+                                    Container (
+                                      constraints: const BoxConstraints(maxWidth: 150),
+                                      child: Column(
+                                        children: <Widget> [
+                                          TextButton(
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                snapshot.data[index]['announcement'],
+                                                style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold
+                                                )
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              showDialog<String>(
+                                            context: context,
+                                            builder: (BuildContext context) => AlertDialog(
+                                              title: Text(snapshot.data[index]['announcement']),
+                                              content: Text(snapshot.data[index]['description']),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            ),
+                                            );
+                                            },
+                                          ),
+                                        ]
+                                      ),
+                                      padding: const EdgeInsets.all(4.0),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                      ),
+                                    ),
+                                    Container (
+                                      child: Column(
+                                        children: <Widget> [
+                                          Text(
+                                            datetime,
+                                            style: const TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                            )
+                                          )
+                                        ],
+                                      ),
+                                      padding: const EdgeInsets.all(4.0),
+                                    ),
+                                    const Padding (
+                                      padding: EdgeInsets.all(8.0),
+                                    ),
+                                    Container (
+                                      child: FutureBuilder<dynamic>(
+                                        future: isLeader(),
+                                        builder: (BuildContext context, snapshot) {
+                                          switch (snapshot.connectionState) {
+                                            case ConnectionState.waiting:
+                                              return const CircularProgressIndicator();
+                                            default:
+                                              if (snapshot.hasError) {
+                                                return Text(
+                                                  'Error: ${snapshot.error}',
+                                                  style: const TextStyle (
+                                                    color: Colors.red,
+                                                  ),
+                                                );
+                                              }
+                                              else {
+                                                if (snapshot.hasData) {
+                                                  if (snapshot.data) {
+                                                    return IconButton(
+                                                      icon: const Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red,
+                                                      ),
+                                                      onPressed: () {
+                                                        showDialog<String>(
+                                                          context: context,
+                                                          builder: (BuildContext context) => AlertDialog(
+                                                            title: const Text('Delete this announcement?'),
+                                                            content: const Text('If you delete this announcement, it will be gone permenantly!'),
+                                                            actions: <Widget>[
+                                                              TextButton(
+                                                                onPressed: () => Navigator.pop(context),
+                                                                child: const Text('Cancel'),
+                                                              ),
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  deleteAnnouncement({
+                                                                    'announcement': snapshot.data[index]['announcement'],
+                                                                    'date_time': snapshot.data[index]['date_time'],
+                                                                    'description': snapshot.data[index]['description'],
+                                                                  });
+                                                                  Navigator.pop(context);
+                                                                  setState(() {});
+                                                                },
+                                                                child: const Text('OK'),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
+                                                  }
+                                                }
+                                              }
+                                            }
+                                            return const SizedBox.shrink();
+                                          },
+                                        ),
+                                    ),
+                                  ]
+                                ),
+                              );
+                            }
+                          )
+                            );
+                        }
+                        else {
+                          return Container (
+                            child: const Text('No announcements available yet!'),
+                            padding: const EdgeInsets.all(16.0),
+                          );
+                        }
+                      }
                   }
                 }
-                return const Text('');
+                return const SizedBox.shrink();
               }
+            ),
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              child: FutureBuilder<dynamic>(
+                future: isLeader(),
+                builder: (BuildContext context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const CircularProgressIndicator();
+                    default:
+                      if (snapshot.hasError) {
+                        return Text(
+                          'Error: ${snapshot.error}',
+                          style: const TextStyle (
+                            color: Colors.red,
+                          ),
+                        );
+                      }
+                      else {
+                        if (snapshot.hasData) {
+                          if (snapshot.data) {
+                            return ElevatedButton(
+                              child: const Text('Add New Anouncement'),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.black, // Text color
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 40,
+                                  vertical: 16
+                                ),
+                                textStyle: const TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                              onPressed: () {
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('Make an Annoucement!'),
+                                    content: Form(
+                                      child: Column (
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget> [
+                                          TextFormField(
+                                            controller: announcementController,
+                                            decoration: const InputDecoration(
+                                              border: UnderlineInputBorder(),
+                                              labelText: 'Announcement',
+                                            ),
+                                          ),
+                                          TextFormField(
+                                            controller: descriptionController,
+                                            decoration: const InputDecoration(
+                                              border: UnderlineInputBorder(),
+                                              labelText: 'Description',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),      
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          addAnnouncement(
+                                            {
+                                              'announcement': announcementController.text,
+                                              'date_time': Timestamp.fromDate(DateTime.now()),
+                                              'description': descriptionController.text,
+                                            }
+                                          );
+                                          Navigator.pop(context);
+                                          announcementController.text = '';
+                                          descriptionController.text = '';
+                                          setState(() {});
+                                        },
+                                        child: const Text('Submit'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        }
+                      }
+                    }
+                    return const SizedBox.shrink();
+                  },
+              )
             )
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
