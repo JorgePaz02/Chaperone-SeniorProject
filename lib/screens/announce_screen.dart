@@ -2,7 +2,7 @@ import 'package:app/screens/create_announcement.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:async';
 
 class AnnouncementScreen extends StatefulWidget {
   const AnnouncementScreen({Key? key}) : super(key: key);
@@ -13,6 +13,11 @@ class AnnouncementScreen extends StatefulWidget {
 class _AnnouncementScreen extends State<AnnouncementScreen> {
   @override
   Widget build(BuildContext context) {
+       void constantRefresh() {
+      setState(() {});
+    }
+
+    Timer.periodic(const Duration(seconds: 5), (Timer t) => constantRefresh());   
     final FirebaseAuth auth = FirebaseAuth.instance;
     Future<bool> isLeader() async {
       return await FirebaseFirestore.instance

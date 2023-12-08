@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
 class CreateItinerary extends StatefulWidget {
   const CreateItinerary({Key? key}) : super(key: key);
@@ -19,6 +20,11 @@ class CreateItineraryform extends State<CreateItinerary> {
 
   @override
   Widget build(BuildContext context) {
+       void constantRefresh() {
+      setState(() {});
+    }
+
+    Timer.periodic(const Duration(seconds: 5), (Timer t) => constantRefresh());   
     Future<void> addItinerary(Map<String, Object> X) async {
       final FirebaseAuth auth = FirebaseAuth.instance;
       final db = FirebaseFirestore.instance;
