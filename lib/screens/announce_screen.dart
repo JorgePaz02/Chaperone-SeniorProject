@@ -156,6 +156,9 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                             shrinkWrap: true,
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
+                              String announcement = snapshot.data[index]['announcement'];
+                              String description = snapshot.data[index]['description'];
+                              Timestamp date_time = snapshot.data[index]['date_time'];
                               DateTime timestamp = snapshot.data[index]['date_time'].toDate();
                               String datetime = DateFormat('dd/MM/yyyy - hh:mm a').format(timestamp);
                               return Container(
@@ -261,11 +264,13 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                                                               ),
                                                               TextButton(
                                                                 onPressed: () {
-                                                                  deleteAnnouncement({
-                                                                    'announcement': snapshot.data[index]['announcement'],
-                                                                    'date_time': snapshot.data[index]['date_time'],
-                                                                    'description': snapshot.data[index]['description'],
-                                                                  });
+                                                                  deleteAnnouncement(
+                                                                    {
+                                                                    'announcement': announcement,
+                                                                    'date_time': date_time,
+                                                                    'description': description,
+                                                                    }
+                                                                  );
                                                                   Navigator.pop(context);
                                                                   setState(() {});
                                                                 },
@@ -342,24 +347,26 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                                   builder: (BuildContext context) => AlertDialog(
                                     title: const Text('Make an Annoucement!'),
                                     content: Form(
-                                      child: Column (
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget> [
-                                          TextFormField(
-                                            controller: announcementController,
-                                            decoration: const InputDecoration(
-                                              border: UnderlineInputBorder(),
-                                              labelText: 'Announcement',
+                                      child: SingleChildScrollView(
+                                        child: Column (
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget> [
+                                            TextFormField(
+                                              controller: announcementController,
+                                              decoration: const InputDecoration(
+                                                border: UnderlineInputBorder(),
+                                                labelText: 'Announcement',
+                                              ),
                                             ),
-                                          ),
-                                          TextFormField(
-                                            controller: descriptionController,
-                                            decoration: const InputDecoration(
-                                              border: UnderlineInputBorder(),
-                                              labelText: 'Description',
+                                            TextFormField(
+                                              controller: descriptionController,
+                                              decoration: const InputDecoration(
+                                                border: UnderlineInputBorder(),
+                                                labelText: 'Description',
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),      
                                     actions: <Widget>[

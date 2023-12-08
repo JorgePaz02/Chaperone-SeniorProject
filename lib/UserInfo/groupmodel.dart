@@ -17,7 +17,7 @@ Future<void> groupSetup(String groupname, int num, String passcode, displayName,
     "groupname": groupname,
     "number of members": num,
     "passcode": passcode,
-    "members": [displayName],
+    "members": [],
     "announcements": announcements,
     'itinerary': itinerary,
     "radius": radius, // Add the radius to the group data
