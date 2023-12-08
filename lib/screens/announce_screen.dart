@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class AnnouncementScreen extends StatefulWidget {
-  AnnouncementScreen({Key? key}) : super(key: key);
+  const AnnouncementScreen({Key? key}) : super(key: key);
 
   @override
   State<AnnouncementScreen> createState() => _AnnouncementScreenState();

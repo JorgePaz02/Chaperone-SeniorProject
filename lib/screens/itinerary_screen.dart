@@ -114,7 +114,14 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
           onPressed: () {
             Navigator.pop(context);
           },
-        ),
+        ),        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.black),
+            onPressed: () {
+              setState(() {});
+            },
+          ),
+        ],
         title: const Row(
           children: [
             Icon(
@@ -132,17 +139,6 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
             ),
           ],
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.refresh,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              setState(() {});
-            },
-          ),
-        ],
       ),
       body: Align(
         alignment: Alignment.center,
