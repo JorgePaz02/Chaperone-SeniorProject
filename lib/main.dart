@@ -1,3 +1,4 @@
+import 'package:app/NotificationServices/notifi_service.dart';
 import 'package:app/screens/announce_screen.dart';
 import 'package:app/screens/itinerary_screen.dart';
 import 'package:app/screens/group_screen.dart';
@@ -16,6 +17,7 @@ import 'screens/members_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().initNotification();
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => SplashScreen(),
+        '/': (context) => const SplashScreen(),
         '/mainscreen':(context) => const MainScreen(),
         '/welcome': (context) => LoginScreen(),
         '/home': (context) => HomeScreen(), // Add a route for HomeScreen
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
           "/messageScreen": (context) => const MessageScreen(),
           "/itineraryScreen": (context) => const ItineraryScreen(),       
           "/membersScreen": (context) => const MembersScreen(),       
-          '/radius_update': (context) => RadiusUpdateScreen(), // Add a route for RadiusUpdateScreen
+          '/radius_update': (context) => const RadiusUpdateScreen(), // Add a route for RadiusUpdateScreen
  },
           
     );
