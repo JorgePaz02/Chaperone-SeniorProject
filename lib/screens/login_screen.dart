@@ -3,7 +3,10 @@ import 'package:app/UserInfo/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 // Import the file containing the startLocationUpdates function
+
+String errorMessage = "";
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -13,7 +16,7 @@ class LoginScreen extends StatelessWidget {
 
   Future<void> _login(BuildContext context) async {
     try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
@@ -25,17 +28,19 @@ class LoginScreen extends StatelessWidget {
         MaterialPageRoute(builder: (context) => HomeScreen()),
       );
     } on FirebaseAuthException catch (e) {
-      String errorMessage = 'An error occurred';
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Wrong password provided for that user.';
+      String errorMessage = 'Error occured: ${e.code}';
+      if (e.code == 'invalid-email') {
+        errorMessage = 'Username not found';
+       
+      } else if (e.code == 'invalid-credential') {
+        errorMessage = 'Password not found';
+       
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         ),
       );
     }
@@ -67,20 +72,20 @@ class LoginScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30.0),
             Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: TextField(
                 controller: emailController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: "Username",
                   border: OutlineInputBorder(),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: TextField(
                 controller: passwordController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: "Password",
                   border: OutlineInputBorder(),
                 ),
