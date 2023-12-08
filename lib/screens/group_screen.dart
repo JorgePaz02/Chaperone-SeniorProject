@@ -141,10 +141,10 @@ void startFetchingMemberLocations(BuildContext context) {
       });
     }
 
-    Future<void> quitGroup(String user) async {
+    Future<void> quitGroup(Map<String, String> X) async {
       final FirebaseAuth auth = FirebaseAuth.instance;
       final db = FirebaseFirestore.instance;
-      db.collection("Users").doc(user).get().then((value) async {
+      db.collection("Users").doc(X['name']).get().then((value) async {
         String passcode = value.get("group");
         final docRef = db.collection("Groups").doc(passcode);
         docRef.update({
@@ -243,7 +243,10 @@ void startFetchingMemberLocations(BuildContext context) {
                               userReset(groupcode!);
                             } else {
                               user = auth.currentUser!.displayName;
-                              quitGroup(user!);
+                            
+                              quitGroup({
+                                'name': user!
+                            });
                             }
                             Future.delayed(
                               const Duration(milliseconds: 3000), () {
