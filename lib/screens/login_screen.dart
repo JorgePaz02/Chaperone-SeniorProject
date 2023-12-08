@@ -33,8 +33,7 @@ class LoginScreen extends StatelessWidget {
         password: passwordController.text,
       );
 
-      // Call the startLocationUpdates function when the user logs in
-      startLocationUpdates(emailController.text);
+
 
 
       await inGroup().then((value) async {

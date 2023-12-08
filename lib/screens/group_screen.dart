@@ -1,4 +1,5 @@
 import 'package:app/UserInfo/QuitGroupReset.dart';
+import 'package:app/UserInfo/geolocator.dart';
 import 'package:app/UserInfo/getUserLocation.dart';
 import 'package:app/UserInfo/distanceComparison.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +24,8 @@ class _GroupScreenState extends State<GroupScreen> {
   void initState() {
     super.initState();
     startFetchingMemberLocations(context);
+      getLocationUpdates();
+
   }
 
   @override
@@ -30,6 +33,19 @@ class _GroupScreenState extends State<GroupScreen> {
     timer.cancel(); // Cancel the timer to prevent memory leaks when the widget is disposed
     super.dispose();
   }
+
+
+
+void getLocationUpdates() async{
+  final FirebaseAuth auth = FirebaseAuth.instance;
+      String currentUserDisplayName = auth.currentUser!.displayName!;
+              startLocationUpdates(currentUserDisplayName);
+}
+
+
+  
+    
+
 
   Future<String> getGroupPasscode() async {
     try {
@@ -49,6 +65,7 @@ class _GroupScreenState extends State<GroupScreen> {
       return ''; // Return an empty string or handle the error accordingly
     }
   }
+  
    Future<int> getRadius() async {
       return await FirebaseFirestore.instance
           .collection('Users')
@@ -65,6 +82,8 @@ class _GroupScreenState extends State<GroupScreen> {
       });
     }
 
+    
+
 Future<List<MemberLocation>> fetchGroupMembersWithLocations(String passcode) async {
   try {
     List<MemberLocation> membersWithLocations = await getGroupMembersWithLocations(passcode);
@@ -75,7 +94,7 @@ Future<List<MemberLocation>> fetchGroupMembersWithLocations(String passcode) asy
   }
 }
 void startFetchingMemberLocations(BuildContext context) {
-  const duration = Duration(seconds: 5); // Change this to your desired interval
+  const duration = Duration(seconds: 120); // Change this to your desired interval
   timer = Timer.periodic(duration, (Timer t) async {
     String passcode = await getGroupPasscode();
     int radius = await getRadius();
@@ -92,9 +111,6 @@ void startFetchingMemberLocations(BuildContext context) {
     }
   });
 }
-
-
-
 
 
     final FirebaseAuth auth = FirebaseAuth.instance;
@@ -195,8 +211,8 @@ void startFetchingMemberLocations(BuildContext context) {
             _buildCircularButton(Icons.message, "Messages", Colors.green, () {
               Navigator.pushNamed(context, "/messageScreen");
             }),
-            _buildCircularButton(Icons.health_and_safety, "Safety", Colors.red, () {
-              print("Safety button tapped");
+            _buildCircularButton(Icons.map, "Map", Colors.red, () {
+                Navigator.pushNamed(context, '/groupMapScreen'); // Assuming '/groupMapScreen' is the named route for GroupMapScreen
             }),
             _buildCircularButton(Icons.mail, "Invitations", Colors.orange, () {
               print("Invitations button tapped");
@@ -211,7 +227,7 @@ void startFetchingMemberLocations(BuildContext context) {
                 print('Failed to retrieve group passcode.');
               }
             }),
-            _buildCircularButton(Icons.settings, "Options", Colors.teal, () {
+            _buildCircularButton(Icons.radar, "Radius", Colors.teal, () {
               Navigator.pushNamed(context, '/radius_update');
               print("Options button tapped");
             }),

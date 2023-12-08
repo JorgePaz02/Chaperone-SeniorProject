@@ -22,6 +22,8 @@ dependencies:
   google_maps_flutter: ^2.5.0
   intl: ^0.18.1
   flutter_local_notifications: ^13.0.0
+  flutter_map_marker_cluster: ^1.3.1
+
 
 dev_dependencies:
   flutter_test:
@@ -35,5 +37,10 @@ flutter:
   uses-material-design: true
 
   assets:
-    - lib/assets/splash_video.mp4
+    - lib/assets/
+    - lib/assets/images/MainMenu.png
+    - lib/assets/images/CreateGroup.png
+    - lib/assets/images/GroupCode.png
+    - lib/assets/images/JoinOrAdd.png
+    - lib/assets/images/SignUpScreen.png
     # Add more assets as needed

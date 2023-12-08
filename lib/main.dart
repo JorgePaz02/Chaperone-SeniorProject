@@ -1,4 +1,5 @@
 import 'package:app/NotificationServices/notifi_service.dart';
+import 'package:app/UserInfo/map.dart';
 import 'package:app/screens/announce_screen.dart';
 import 'package:app/screens/itinerary_screen.dart';
 import 'package:app/screens/group_screen.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
           "/itineraryScreen": (context) => const ItineraryScreen(),       
           "/membersScreen": (context) => const MembersScreen(),       
           '/radius_update': (context) => const RadiusUpdateScreen(), // Add a route for RadiusUpdateScreen
+          '/groupMapScreen': (context) => MapScreen()
  },
           
     );

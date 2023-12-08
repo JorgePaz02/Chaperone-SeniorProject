@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset('lib/assets/splash_video.mp4')
+    _controller = VideoPlayerController.asset('lib/assets/BuddySys.mp4')
       ..initialize().then((_) {
         setState(() {
           _isVideoInitialized = true;
@@ -57,4 +57,4 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-}
+} 
