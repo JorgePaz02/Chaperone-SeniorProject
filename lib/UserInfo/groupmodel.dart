@@ -11,6 +11,7 @@ Future<void> groupSetup(String groupname, int num, String passcode, displayName,
       'date_time': Timestamp.fromDate(DateTime.now())
     }
   ];
+  var messages = ["Welcome, "+groupname];
   var itinerary = [];
 
   final data = <String, dynamic>{
@@ -21,6 +22,7 @@ Future<void> groupSetup(String groupname, int num, String passcode, displayName,
     "announcements": announcements,
     'itinerary': itinerary,
     "radius": radius, // Add the radius to the group data
+    "messages": messages
   };
 
   final docRef2 = db.collection("Users").doc(displayName);
