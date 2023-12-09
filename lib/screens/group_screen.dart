@@ -170,7 +170,7 @@ void startFetchingMemberLocations(BuildContext context) {
             future: groupName(),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data.toString(),
+                return Text( "$groupcode :${snapshot.data.toString()}",
                   style: const TextStyle(color: Colors.black));
               }
               return const Text('');
