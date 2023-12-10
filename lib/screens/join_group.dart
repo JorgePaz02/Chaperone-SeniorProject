@@ -12,9 +12,10 @@ class JoinGroupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
 
-                                             //Checks if user is in group already.
+    //Checks if user is in group already.
     final passcode = TextEditingController();
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -26,57 +27,67 @@ class JoinGroupScreen extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: 60), // Spacer
-              Text(
-                'Enter your group code:',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                height: 20.0
-              ), // Spacer
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: passcode,
-                  decoration: InputDecoration(
-                    labelText: "Group Code",
-                    border: OutlineInputBorder(),
+        child: Container(
+          // decoration: const BoxDecoration(
+          //   image: DecorationImage(
+          //     image: AssetImage(
+          //       'lib/assets/GroupCode.png'
+          //     ), // Update the image path
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: 60), // Spacer
+                Text(
+                  'Enter your group code:',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 20.0
-              ), // Spacer
-              ElevatedButton(
-                onPressed: () {
-                  // Add your join group functionality here
-                  FirebaseFirestore.instance
-                      .collection('Groups')
-                      .doc(passcode.text)
-                      .get()
-                      .then((DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists) {
-                      joininggroup(passcode.text, auth.currentUser!.displayName);
-                      Navigator.pushNamed(context, '/groupScreen');
-                    }
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  textStyle: const TextStyle(fontSize: 20),
+                SizedBox(
+                  height: 20.0
+                ), // Spacer
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: TextField(
+                    controller: passcode,
+                    decoration: InputDecoration(
+                      labelText: "Group Code",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
                 ),
-                child: const Text('Join Group'),
-              ),
-            ],
+                SizedBox(
+                  height: 20.0
+                ), // Spacer
+                ElevatedButton(
+                  onPressed: () {
+                    // Add your join group functionality here
+                    FirebaseFirestore.instance
+                        .collection('Groups')
+                        .doc(passcode.text)
+                        .get()
+                        .then((DocumentSnapshot documentSnapshot) {
+                      if (documentSnapshot.exists) {
+                        joininggroup(passcode.text, auth.currentUser!.displayName);
+                        Navigator.pushNamed(context, '/groupScreen');
+                      }
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    textStyle: const TextStyle(fontSize: 20),
+                  ),
+                  child: const Text('Join Group'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

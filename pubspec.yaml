@@ -36,4 +36,11 @@ flutter:
 
   assets:
     - lib/assets/splash_video.mp4
+    - lib/assets/regular.png
+    - lib/assets/LogOrSign.png
+    - lib/assets/JoinOrAdd.png
+    - lib/assets/GroupMade.png
+    - lib/assets/CreateGroup.png
+    - lib/assets/MainScreen.png
+    - lib/assets/GroupCode.png
     # Add more assets as needed
