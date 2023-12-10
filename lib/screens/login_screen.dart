@@ -18,22 +18,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final TextEditingController nameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   Future<bool> inGroup() async {
-      final FirebaseAuth auth = FirebaseAuth.instance;
-      final db = FirebaseFirestore.instance;
-      return await db
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final db = FirebaseFirestore.instance;
+    return await db
         .collection('Users')
         .doc(auth.currentUser!.displayName)
         .get()
         .then((value) async {
-          return value.get("group") != "";
-        }
-      );
-    }
+      return value.get("group") != "";
+    });
+  }
 
   Future<void> _login(BuildContext context) async {
     try {
@@ -45,11 +43,12 @@ class _LoginScreenState extends State<LoginScreen> {
       // Call the startLocationUpdates function when the user logs in
       startLocationUpdates(nameController.text);
       await inGroup().then((value) async {
-        if(value) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => GroupScreen()));
-        }
-        else {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        if (value) {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => GroupScreen()));
+        } else {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomeScreen()));
         }
       });
     } on FirebaseAuthException catch (e) {
@@ -63,10 +62,14 @@ class _LoginScreenState extends State<LoginScreen> {
           break;
         case 'channel-error':
           setState(() {
-            nameError = nameController.text.isEmpty ? 'The email address provided is empty.' : '';
-            passwordError = passwordController.text.isEmpty ? 'The password provided is empty.' : '';
+            nameError = nameController.text.isEmpty
+                ? 'The email address provided is empty.'
+                : '';
+            passwordError = passwordController.text.isEmpty
+                ? 'The password provided is empty.'
+                : '';
           });
-          break;     
+          break;
       }
     } catch (e) {
       setState(() {
@@ -82,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true, // Make the app bar transparent
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -92,57 +96,70 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              "Welcome Back!",
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 30.0),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: "Username",
-                  border: const OutlineInputBorder(),
-                  errorText: nameError.isEmpty ? null : nameError,
+      body: Container(
+        width: double.infinity, // Fill the width of the screen
+        height: double.infinity, // Fill the height of the screen
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image:
+                AssetImage('lib/assets/regular.png'), // Update the image path
+            fit: BoxFit.cover, // Set to BoxFit.cover to fit the whole screen
+            alignment:
+                Alignment.center, // Center the image within the container
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                "Welcome Back!",
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: passwordController,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  border: const OutlineInputBorder(),
-                  errorText: passwordError.isEmpty ? null : passwordError,
-                ),
-                obscureText: true,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await _login(context);
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.black, // Text color
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                textStyle: const TextStyle(
-                  fontSize: 18,
+              const SizedBox(height: 30.0),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: "Username",
+                    border: const OutlineInputBorder(),
+                    errorText: nameError.isEmpty ? null : nameError,
+                  ),
                 ),
               ),
-              child: const Text("Log In"),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: passwordController,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    border: const OutlineInputBorder(),
+                    errorText: passwordError.isEmpty ? null : passwordError,
+                  ),
+                  obscureText: true,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  await _login(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.black, // Text color
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  textStyle: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+                child: const Text("Log In"),
+              ),
+            ],
+          ),
         ),
       ),
     );
