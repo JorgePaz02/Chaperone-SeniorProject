@@ -38,15 +38,17 @@ class HomeScreen extends StatelessWidget {
     checkGroup();
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.grey[200],
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            // Navigator.pushNamed(context, '/home');
-          },
+        leading: const CircleAvatar(
+          backgroundColor:
+              Colors.transparent, // Background color of the circle button
+          child: Icon(
+            Icons.person,
+            color: Colors.purple,
+            size: 45.0,
+          ),
         ),
         title: FutureBuilder<String>(
           future: getName(),
@@ -60,7 +62,7 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
             image:
                 AssetImage('lib/assets/JoinOrAdd.png'), // Update the image path
