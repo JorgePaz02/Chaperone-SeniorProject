@@ -128,7 +128,7 @@ class _MembersScreenState extends State<MembersScreen> {
                                         Container(
                                           padding: const EdgeInsets.all(4.0),
                                           child: FutureBuilder<dynamic>(
-                                            future: isLeader(snapshot.data[index]['name']),
+                                            future: isLeader(snapshot.data[index]),
                                             builder: (BuildContext context,snapshot) {
                                               switch (snapshot.connectionState) {
                                                 case ConnectionState.waiting:
@@ -166,7 +166,7 @@ class _MembersScreenState extends State<MembersScreen> {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                '${index + 1}. ${snapshot.data[index]['name']}',
+                                                '${index + 1}. ${snapshot.data[index]}',
                                                 style: const TextStyle(
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold
@@ -177,9 +177,9 @@ class _MembersScreenState extends State<MembersScreen> {
                                               showDialog<String>(
                                                 context: context,
                                                 builder: (BuildContext context) => AlertDialog(
-                                                  title: Text(snapshot.data[index]['name']),
+                                                  title: Text(snapshot.data[index]),
                                                   content: FutureBuilder<dynamic>(
-                                                    future: isLeader(snapshot.data[index]['name']),
+                                                    future: isLeader(snapshot.data[index]),
                                                     builder: (BuildContext context,snapshot) {
                                                       switch (snapshot.connectionState) {
                                                         case ConnectionState.waiting:
@@ -195,7 +195,7 @@ class _MembersScreenState extends State<MembersScreen> {
                                                           }
                                                           else {
                                                             if (snapshot.hasData) {
-                                                              return Text((snapshot.data ? 'They are a leader of your group!' : ''));
+                                                              return Text((snapshot.data ? 'They are a leader of your group!' : 'They are a fellow member of your group!'));
                                                             }
                                                           }
                                                       }
