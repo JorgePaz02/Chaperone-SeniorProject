@@ -10,8 +10,6 @@ class JoinGroupScreen extends StatelessWidget {
   final FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
-
-
     //Checks if user is in group already.
     final passcode = TextEditingController();
     return Scaffold(
@@ -48,9 +46,7 @@ class JoinGroupScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(
-                  height: 20.0
-                ), // Spacer
+                SizedBox(height: 20.0), // Spacer
                 Padding(
                   padding: EdgeInsets.all(16.0),
                   child: TextField(
@@ -61,9 +57,7 @@ class JoinGroupScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 20.0
-                ), // Spacer
+                SizedBox(height: 20.0), // Spacer
                 ElevatedButton(
                   onPressed: () {
                     // Add your join group functionality here
@@ -73,15 +67,22 @@ class JoinGroupScreen extends StatelessWidget {
                         .get()
                         .then((DocumentSnapshot documentSnapshot) {
                       if (documentSnapshot.exists) {
-                        joininggroup(passcode.text, auth.currentUser!.displayName);
-                        Navigator.pushNamed(context, '/groupScreen');
+                        if (documentSnapshot.get("number of members") ==
+                            documentSnapshot.get("members").length) {
+                          return Text("Group is already Full");
+                        } else {
+                          joininggroup(
+                              passcode.text, auth.currentUser!.displayName);
+                          Navigator.pushNamed(context, '/groupScreen');
+                        }
                       }
                     });
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 16),
                     textStyle: const TextStyle(fontSize: 20),
                   ),
                   child: const Text('Join Group'),
