@@ -7,7 +7,7 @@ Future<void> userReset(String groupCode) async {
   db.collection("Groups").doc(groupCode).get().then((value) async {
     List members = value.get("members");
     for (var i in members) {
-      final docRef = db.collection("Users").doc(i['name']);
+      final docRef = db.collection("Users").doc(i);
       docRef.update({
         "group": "",
         "group leader": false,

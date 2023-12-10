@@ -6,12 +6,7 @@ Future<void> joininggroup(passcode, displayName) async {
 
   final docRef = db.collection("Groups").doc(passcode);
   docRef.update({
-    "members": FieldValue.arrayUnion([
-      {
-        'name': displayName,
-      }
-      ]
-    ),
+    "members": FieldValue.arrayUnion([displayName]),
   });
 
 
