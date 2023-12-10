@@ -17,28 +17,25 @@ String generateRandomCode({int length = 6}) {
   ));
 }
 
-
-class groupcreated extends StatefulWidget{
- groupcreated({required this.name, required this.passcode});
+class groupcreated extends StatefulWidget {
+  groupcreated({required this.name, required this.passcode});
   final String name;
   final int passcode;
- 
+
   // etc
   @override
-  State<StatefulWidget> createState() { return GroupCreatedScreen();}
+  State<StatefulWidget> createState() {
+    return GroupCreatedScreen();
+  }
 }
 
 // ignore: use_key_in_widget_constructors
 class GroupCreatedScreen extends State<groupcreated> {
-
-
-
   final groupnames = CreateGroupScreen().groupname;
   final numbers = CreateGroupScreen().number;
   final String randomCode = generateRandomCode();
   final FirebaseAuth auth = FirebaseAuth.instance;
   @override
-  
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -101,27 +98,25 @@ class GroupCreatedScreen extends State<groupcreated> {
                 alignment:
                     Alignment.center, // Align the button to the bottom center
                 child: ElevatedButton(
-                 onPressed: () {
-  int radius = 0; // Replace this with your actual radius value
-  groupSetup(
-    widget.name,
-    widget.passcode,
-    randomCode,
-    auth.currentUser!.displayName,
-    radius,
-  );
+                  onPressed: () {
+                    int radius =
+                        0; // Replace this with your actual radius value
+                    groupSetup(
+                      widget.name,
+                      widget.passcode,
+                      randomCode,
+                      auth.currentUser!.displayName,
+                      radius,
+                    );
 
-  joininggroupAsLeader(randomCode, auth.currentUser!.displayName);
+                    joininggroupAsLeader(
+                        randomCode, auth.currentUser!.displayName);
 
-  
-  // Navigate to the '/groupScreen' route and pass 'randomCode' as a parameter
-  Navigator.pushNamed(
-    context,
-    '/groupScreen' // Pass 'randomCode' as an argument
-  );
-},
-
-
+                    // Navigate to the '/groupScreen' route and pass 'randomCode' as a parameter
+                    Navigator.pushNamed(context,
+                        '/groupScreen' // Pass 'randomCode' as an argument
+                        );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors
                         .black, // Set the button background color to black
