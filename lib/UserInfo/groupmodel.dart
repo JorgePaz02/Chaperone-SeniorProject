@@ -13,6 +13,7 @@ Future<void> groupSetup(String groupname, int num, String passcode, displayName,
   ];
   var messages = ["Welcome, "+groupname];
   var itinerary = [];
+  var invitations = [];
 
   final data = <String, dynamic>{
     "groupname": groupname,
@@ -21,6 +22,7 @@ Future<void> groupSetup(String groupname, int num, String passcode, displayName,
     "members": [],
     "announcements": announcements,
     'itinerary': itinerary,
+    'invitations': invitations,
     "radius": radius, // Add the radius to the group data
     "messages": messages
   };

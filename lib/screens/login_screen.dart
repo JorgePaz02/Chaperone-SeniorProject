@@ -10,10 +10,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 String errorMessage = "";
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
 
-  final TextEditingController emailController = TextEditingController();
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   Future<bool> inGroup() async {
@@ -32,12 +38,12 @@ class LoginScreen extends StatelessWidget {
   Future<void> _login(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
+        email: nameController.text,
         password: passwordController.text,
       );
 
       // Call the startLocationUpdates function when the user logs in
-      startLocationUpdates(emailController.text);
+      startLocationUpdates(nameController.text);
       await inGroup().then((value) async {
         if(value) {
           Navigator.push(context, MaterialPageRoute(builder: (context) => GroupScreen()));
@@ -47,23 +53,31 @@ class LoginScreen extends StatelessWidget {
         }
       });
     } on FirebaseAuthException catch (e) {
-      String errorMessage = 'Error occured: ${e.code}';
-      if (e.code == 'invalid-email') {
-        errorMessage = 'Username not found';
-       
-      } else if (e.code == 'invalid-credential') {
-        errorMessage = 'Password not found';
-       
+      print(e.code);
+      switch (e.code) {
+        case 'invalid-credential':
+          setState(() {
+            nameError = 'The email address provided is invalid.';
+            passwordError = 'The password provided is invalid.';
+          });
+          break;
+        case 'channel-error':
+          setState(() {
+            nameError = nameController.text.isEmpty ? 'The email address provided is empty.' : '';
+            passwordError = passwordController.text.isEmpty ? 'The password provided is empty.' : '';
+          });
+          break;     
       }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          duration: const Duration(seconds: 3),
-        ),
-      );
+    } catch (e) {
+      setState(() {
+        passwordError = 'There has been an error. Please try again.';
+        nameError = 'There has been an error. Please try again.';
+      });
     }
   }
+
+  String nameError = "";
+  String passwordError = "";
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +92,7 @@ class LoginScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -93,10 +107,11 @@ class LoginScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextField(
-                controller: emailController,
-                decoration: const InputDecoration(
+                controller: nameController,
+                decoration: InputDecoration(
                   labelText: "Username",
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  errorText: nameError.isEmpty ? null : nameError,
                 ),
               ),
             ),
@@ -104,9 +119,10 @@ class LoginScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: TextField(
                 controller: passwordController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: "Password",
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  errorText: passwordError.isEmpty ? null : passwordError,
                 ),
                 obscureText: true,
               ),

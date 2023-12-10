@@ -15,71 +15,84 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
   final TextEditingController eventController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
+  var data = [];
+
   var now = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
+
     Future<bool> isLeader() async {
       return await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-        if (value.get("group leader") == true) {
-          return true;
-        } else {
-          return false;
-        }
-      });
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then(
+          (value) async {
+            return value.get("group leader");
+          }
+        );
     }
 
     Future<dynamic> listItinerary() async {
       return await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-        return await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then(
+          (value) async {
+            return await FirebaseFirestore.instance
             .collection('Groups')
             .doc(value.get('group'))
             .get()
-            .then((value2) {
-          return value2.get('itinerary');
-        });
-      });
+            .then(
+              (value2) {
+                return value2.get('itinerary');
+              }
+            );
+          }
+        );
     }
 
     Future<void> addItinerary(Map<String, Object> X) async {
       final FirebaseAuth auth = FirebaseAuth.instance;
       final db = FirebaseFirestore.instance;
       db
-          .collection("Users")
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-        String passcode = value.get("group");
-        final docRef = db.collection("Groups").doc(passcode);
-        docRef.update({
-          'itinerary': FieldValue.arrayUnion([X]),
-        });
-      });
+        .collection("Users")
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then(
+          (value) async {
+            String passcode = value.get("group");
+            final docRef = db.collection("Groups").doc(passcode);
+            docRef.update(
+              {
+                'itinerary': FieldValue.arrayUnion([X]),
+              }
+            );
+          }
+        );
     }
 
     Future<void> deleteItinerary(Map<String, Object> X) async {
       final FirebaseAuth auth = FirebaseAuth.instance;
       final db = FirebaseFirestore.instance;
       db
-          .collection("Users")
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-        String passcode = value.get("group");
-        final docRef = db.collection("Groups").doc(passcode);
-        docRef.update({
-          "itinerary": FieldValue.arrayRemove([X]),
-        });
-      });
+        .collection("Users")
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then(
+          (value) async {
+            String passcode = value.get("group");
+            final docRef = db.collection("Groups").doc(passcode);
+            docRef.update(
+              {
+                'itinerary': FieldValue.arrayRemove([X]),
+              }
+            );
+          }
+        );
     }
 
     void _showDialog(Widget child) {
@@ -102,27 +115,32 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Colors.green,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.black),
-            onPressed: () {
-              setState(() {});
-            },
-          ),
-        ],
         title: const Row(
           children: [
-            Icon(Icons.access_time, color: Colors.green),
-            SizedBox(width: 10),
-            Text('Itinerary', style: TextStyle(color: Colors.black)),
+            Icon(
+              Icons.access_time,
+              color: Colors.white
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+            ),
+            Text(
+              'Itinerary',
+              style: TextStyle(
+                color: Colors.white
+              )
+            ),
           ],
         ),
       ),
@@ -132,213 +150,174 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             FutureBuilder<dynamic>(
-                future: listItinerary(),
-                builder: (BuildContext context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                   
-                    default:
-                      if (snapshot.hasError) {
-                        return Text(
-                          'Error: ${snapshot.error}',
-                          style: const TextStyle(
-                            color: Colors.red,
-                          ),
-                        );
-                      } else {
-                        if (snapshot.hasData) {
-                          if (snapshot.data.length != 0) {
-                            return Flexible(
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: snapshot.data.length,
-                                    itemBuilder: (context, index) {
-                                      String event =
-                                          snapshot.data[index]['event'];
-                                      String description =
-                                          snapshot.data[index]['description'];
-                                      Timestamp date_time =
-                                          snapshot.data[index]['date_time'];
-                                      DateTime timestamp = snapshot.data[index]
-                                              ['date_time']
-                                          .toDate();
-                                      String datetime =
-                                          DateFormat('dd/MM/yyyy - hh:mm a')
-                                              .format(timestamp);
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            top: const BorderSide(
-                                                color: Colors.grey),
-                                            bottom: BorderSide(
-                                                color: index <
-                                                        snapshot.data.length - 1
-                                                    ? Colors.transparent
-                                                    : Colors.grey),
-                                          ),
-                                        ),
-                                        child: Row(children: <Widget>[
-                                          Container(
-                                            constraints: const BoxConstraints(
-                                              maxWidth: 300,
-                                            ),
-                                            child: Column(children: <Widget>[
-                                              TextButton(
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: RichText(
-                                                    text: TextSpan(
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                      ),
-                                                      children: <TextSpan>[
-                                                        TextSpan(
-                                                            text: '$datetime: ',
-                                                            style: const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold)),
-                                                        TextSpan(
-                                                            text: snapshot
-                                                                    .data[index]
-                                                                ['event']),
-                                                      ],
-                                                    ),
+              future: Future.wait([listItinerary(), isLeader()]),
+              builder: (BuildContext context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    // return const CircularProgressIndicator();
+                  default:
+                    if (snapshot.hasError) {
+                      return Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle (
+                          color: Colors.red,
+                        ),
+                      );
+                    }
+                    else {
+                      if (snapshot.hasData) {
+                        if (snapshot.data[0].length != 0) {
+                            return Flexible (
+                              child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: snapshot.data[0].length,
+                            itemBuilder: (context, index) {
+                              DateTime timestamp = snapshot.data[0][index]['date_time'].toDate();
+                              String datetime = DateFormat('dd/MM/yyyy - hh:mm a').format(timestamp);
+                              return Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    top: const BorderSide(color: Colors.grey),
+                                    bottom: BorderSide(color:
+                                      index < snapshot.data[0].length - 1
+                                      ? 
+                                      Colors.transparent
+                                      :
+                                      Colors.grey
+                                    ),
+                                  ),
+                                  color:
+                                    index % 2 == 0 
+                                    ? 
+                                    Colors.grey[100]
+                                    : 
+                                    Colors.grey[200],
+                                ),
+                                child: Row(
+                                  children: <Widget> [
+                                    Container (
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 300,
+                                      ),
+                                      child: Column(
+                                        children: <Widget> [
+                                          TextButton(
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  style: const TextStyle(
+                                                    color: Colors.black,
                                                   ),
-                                                ),
-                                                onPressed: () {
-                                                  showDialog<String>(
-                                                    context: context,
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        AlertDialog(
-                                                      title: Text(
-                                                          "$datetime: ${snapshot.data[index]['event']}"),
-                                                      content: Text(
-                                                          snapshot.data[index]
-                                                              ['description']),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child:
-                                                              const Text('OK'),
-                                                        ),
-                                                      ],
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                      text: '$datetime: ',
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.bold
+                                                      )
                                                     ),
-                                                  );
-                                                },
+                                                    TextSpan(
+                                                      text: snapshot.data[0][index]['event']
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ]),
-                                            padding: const EdgeInsets.all(4.0),
-                                          ),
-                                          Expanded(
-                                            child: Container(),
-                                          ),
-                                          const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                          ),
-                                          Container(
-                                            child: FutureBuilder<dynamic>(
-                                              future: isLeader(),
-                                              builder: (BuildContext context,
-                                                  snapshot) {
-                                                switch (
-                                                    snapshot.connectionState) {
-                                                  case ConnectionState.waiting:
-                                                  default:
-                                                    if (snapshot.hasError) {
-                                                      return Text(
-                                                        'Error: ${snapshot.error}',
-                                                        style: const TextStyle(
-                                                          color: Colors.red,
-                                                        ),
-                                                      );
-                                                    } else {
-                                                      if (snapshot.hasData) {
-                                                        if (snapshot.data) {
-                                                          return IconButton(
-                                                            icon: const Icon(
-                                                              Icons.delete,
-                                                              color: Colors.red,
-                                                            ),
-                                                            onPressed: () {
-                                                              showDialog<
-                                                                  String>(
-                                                                context:
-                                                                    context,
-                                                                builder: (BuildContext
-                                                                        context) =>
-                                                                    AlertDialog(
-                                                                  title: const Text(
-                                                                      'Delete this event?'),
-                                                                  content:
-                                                                      const Text(
-                                                                          'If you delete this event, it will be gone permenantly!'),
-                                                                  actions: <Widget>[
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.pop(context),
-                                                                      child: const Text(
-                                                                          'Cancel'),
-                                                                    ),
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        deleteItinerary({
-                                                                          'date_time':
-                                                                              date_time,
-                                                                          'description':
-                                                                              description,
-                                                                          'event':
-                                                                              event,
-                                                                        });
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                        setState(
-                                                                            () {});
-                                                                      },
-                                                                      child: const Text(
-                                                                          'OK'),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              );
-                                                            },
-                                                          );
-                                                        }
-                                                      }
-                                                    }
-                                                }
-                                                return const SizedBox.shrink();
-                                              },
                                             ),
+                                            onPressed: () {
+                                              showDialog<String>(
+                                            context: context,
+                                            builder: (BuildContext context) => AlertDialog(
+                                              title: Text("$datetime: ${snapshot.data[0][index]['event']}"),
+                                              content: Text(snapshot.data[0][index]['description']),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            ),
+                                            );
+                                            },
                                           ),
-                                        ]),
-                                      );
-                                    }));
-                          } else {
-                            return Container(
-                              child: const Text('No events available yet!'),
-                              padding: const EdgeInsets.all(16.0),
+                                        ]
+                                      ),
+                                      padding: const EdgeInsets.all(4.0),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                      ),
+                                    ),
+                                    const Padding (
+                                      padding: EdgeInsets.all(8.0),
+                                    ),
+                                    Container (
+                                      child:
+                                      snapshot.data[1]
+                                      ?
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                        onPressed: () {
+                                          showDialog<String>(
+                                            context: context,
+                                            builder: (BuildContext context) => AlertDialog(
+                                              title: const Text('Delete this event?'),
+                                              content: const Text('If you delete this event, it will be gone permenantly!'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(context),
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    deleteItinerary({
+                                                      'date_time': snapshot.data[0][index]['date_time'],
+                                                      'description': snapshot.data[0][index]['description'],
+                                                      'event': snapshot.data[0][index]['event'],
+                                                    });
+                                                    Navigator.pop(context);
+                                                    setState(() {});
+                                                  },
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      )
+                                      :
+                                      const SizedBox.shrink()
+                                    ),
+                                  ]
+                                ),
+                              );
+                            }
+                          )
                             );
-                          }
+                        }
+                        else {
+                          return Container (
+                            child: const Text('No events available yet!'),
+                            padding: const EdgeInsets.all(16.0),
+                          );
                         }
                       }
                   }
-                  return const SizedBox.shrink();
-                }),
+                }
+                return const SizedBox.shrink();
+              }
+            ),
             Container(
                 padding: const EdgeInsets.all(16.0),
                 child: FutureBuilder<dynamic>(
                   future: isLeader(),
                   builder: (BuildContext context, snapshot) {
                     switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
+                      // case ConnectionState.waiting:
                        
                       default:
                         if (snapshot.hasError) {

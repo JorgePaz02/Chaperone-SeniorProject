@@ -7,53 +7,59 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null, // Set the AppBar to null to remove it
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              "Party Patrol",
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
+      appBar: null,
+      body: Container(
+        color: Colors.white,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                "Party Patrol",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 56.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 30.0),
-            ButtonBar(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/welcome');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16), // Button padding
-                    textStyle: const TextStyle(
-                      fontSize: 18, // Text size
+              const SizedBox(
+                height: 80.0
+              ),
+              ButtonBar(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/welcome');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white, backgroundColor: Colors.black, // Text color
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16), // Button padding
+                      textStyle: const TextStyle(
+                        fontSize: 18, // Text size
+                      ),
+                      // side: const BorderSide(color: Colors.black), // Button border color
                     ),
-                    side: const BorderSide(color: Colors.black), // Button border color
+                    child: const Text("Log In"),
                   ),
-                  child: const Text("Log In"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Registration()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16), // Button padding
-                    textStyle: const TextStyle(
-                      fontSize: 18, // Text size
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const Registration()));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white, backgroundColor: Colors.black, // Text color
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16), // Button padding
+                      textStyle: const TextStyle(
+                        fontSize: 18, // Text size
+                      ),
+                      // side: const BorderSide(color: Colors.black), // Button border color
                     ),
-                    side: const BorderSide(color: Colors.black), // Button border color
+                    child: const Text("Sign Up"),
                   ),
-                  child: const Text("Sign Up"),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
