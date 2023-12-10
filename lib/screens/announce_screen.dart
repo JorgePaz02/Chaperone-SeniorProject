@@ -17,24 +17,23 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    void constantRefresh() {
-      setState(() {});
-    }
+    // void constantRefresh() {
+    //   setState(() {});
+    // }
 
-    Timer.periodic(const Duration(seconds: 5), (Timer t) => constantRefresh());
+    // Timer.periodic(const Duration(seconds: 5), (Timer t) => constantRefresh());
+
     final FirebaseAuth auth = FirebaseAuth.instance;
     Future<bool> isLeader() async {
       return await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-        if (value.get("group leader") == true) {
-          return true;
-        } else {
-          return false;
-        }
-      });
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then(
+          (value) async {
+            return value.get("group leader");
+          }
+        );
     }
 
     Future<dynamic> listAnnouncements() async {
@@ -87,32 +86,26 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Colors.blue,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: const Row(
           children: [
-            Icon(Icons.announcement, color: Colors.blue),
+            Icon(Icons.announcement, color: Colors.white),
             SizedBox(width: 10),
-            Text('Announcements', style: TextStyle(color: Colors.black)),
+            Text(
+              'Announcements',
+              style: TextStyle(
+                color: Colors.white
+              )
+            ),
           ],
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.refresh,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              setState(() {});
-            },
-          ),
-        ],
       ),
       body: Align(
         alignment: Alignment.center,
@@ -120,7 +113,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             FutureBuilder<dynamic>(
-                future: listAnnouncements(),
+                future: Future.wait([listAnnouncements(), isLeader()]),
                 builder: (BuildContext context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
@@ -135,80 +128,78 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                         );
                       } else {
                         if (snapshot.hasData) {
-                          if (snapshot.data.length != 0) {
+                          if (snapshot.data[0].length != 0) {
                             return Flexible(
                                 child: ListView.builder(
                                     shrinkWrap: true,
-                                    itemCount: snapshot.data.length,
+                                    itemCount: snapshot.data[0].length,
                                     itemBuilder: (context, index) {
-                                      String announcement =
-                                          snapshot.data[index]['announcement'];
-                                      String description =
-                                          snapshot.data[index]['description'];
-                                      Timestamp date_time =
-                                          snapshot.data[index]['date_time'];
-                                      DateTime timestamp = snapshot.data[index]
-                                              ['date_time']
-                                          .toDate();
-                                      String datetime =
-                                          DateFormat('dd/MM/yyyy - hh:mm a')
-                                              .format(timestamp);
+                                      DateTime timestamp = snapshot.data[0][index]['date_time'].toDate();
+                                      String datetime = DateFormat('dd/MM/yyyy - hh:mm a').format(timestamp);
                                       return Container(
                                         decoration: BoxDecoration(
                                           border: Border(
                                             top: const BorderSide(
-                                                color: Colors.grey),
+                                                color: Colors.grey
+                                              ),
                                             bottom: BorderSide(
-                                                color: index <
-                                                        snapshot.data.length - 1
-                                                    ? Colors.transparent
-                                                    : Colors.grey),
+                                              color:
+                                              (index < snapshot.data[0].length - 1)
+                                              ?
+                                              Colors.transparent
+                                              : 
+                                              Colors.grey
+                                            ),
                                           ),
+                                          color:
+                                            index % 2 == 0 
+                                            ? 
+                                            Colors.grey[100]
+                                            : 
+                                            Colors.grey[200],
                                         ),
                                         child: Row(children: <Widget>[
                                           Container(
                                             constraints: const BoxConstraints(
-                                                maxWidth: 150),
+                                              maxWidth: 150
+                                            ),
                                             child: Column(children: <Widget>[
                                               TextButton(
                                                 child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                      snapshot.data[index]
-                                                          ['announcement'],
-                                                      style: const TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
+                                                  alignment: Alignment.centerLeft,
+                                                  child: Text(snapshot.data[0][index]['announcement'],
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.bold,
+                                                    )
+                                                  ),
                                                 ),
                                                 onPressed: () {
                                                   showDialog<String>(
                                                     context: context,
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        AlertDialog(
-                                                      title: Text(
-                                                          snapshot.data[index]
-                                                              ['announcement']),
-                                                      content: Text(
-                                                          snapshot.data[index]
-                                                              ['description']),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child:
-                                                              const Text('OK'),
+                                                    builder: (BuildContext context) =>
+                                                      AlertDialog(
+                                                        title: Text(
+                                                          snapshot.data[0][index]['announcement']
                                                         ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ]),
+                                                        content: Text(
+                                                          snapshot.data[0][index]['description']
+                                                        ),
+                                                        actions: <Widget>[
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(context);
+                                                            },
+                                                            child:
+                                                              const Text('OK'),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ]
+                                            ),
                                             padding: const EdgeInsets.all(4.0),
                                           ),
                                           Expanded(
@@ -217,11 +208,12 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                                           Container(
                                             child: Column(
                                               children: <Widget>[
-                                                Text(datetime,
-                                                    style: const TextStyle(
-                                                      fontStyle:
-                                                          FontStyle.italic,
-                                                    ))
+                                                Text(
+                                                  datetime,
+                                                  style: const TextStyle(
+                                                    fontStyle:FontStyle.italic,
+                                                  )
+                                                )
                                               ],
                                             ),
                                             padding: const EdgeInsets.all(4.0),
@@ -230,86 +222,51 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                                             padding: EdgeInsets.all(8.0),
                                           ),
                                           Container(
-                                            child: FutureBuilder<dynamic>(
-                                              future: isLeader(),
-                                              builder: (BuildContext context,
-                                                  snapshot) {
-                                                switch (
-                                                    snapshot.connectionState) {
-                                                  case ConnectionState.waiting:
-                                                    return const CircularProgressIndicator();
-                                                  default:
-                                                    if (snapshot.hasError) {
-                                                      return Text(
-                                                        'Error: ${snapshot.error}',
-                                                        style: const TextStyle(
-                                                          color: Colors.red,
-                                                        ),
-                                                      );
-                                                    } else {
-                                                      if (snapshot.hasData) {
-                                                        if (snapshot.data) {
-                                                          return IconButton(
-                                                            icon: const Icon(
-                                                              Icons.delete,
-                                                              color: Colors.red,
-                                                            ),
-                                                            onPressed: () {
-                                                              showDialog<
-                                                                  String>(
-                                                                context:
-                                                                    context,
-                                                                builder: (BuildContext
-                                                                        context) =>
-                                                                    AlertDialog(
-                                                                  title: const Text(
-                                                                      'Delete this announcement?'),
-                                                                  content:
-                                                                      const Text(
-                                                                          'If you delete this announcement, it will be gone permenantly!'),
-                                                                  actions: <Widget>[
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.pop(context),
-                                                                      child: const Text(
-                                                                          'Cancel'),
-                                                                    ),
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        deleteAnnouncement({
-                                                                          'announcement':
-                                                                              announcement,
-                                                                          'date_time':
-                                                                              date_time,
-                                                                          'description':
-                                                                              description,
-                                                                        });
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                        setState(
-                                                                            () {});
-                                                                      },
-                                                                      child: const Text(
-                                                                          'OK'),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              );
-                                                            },
-                                                          );
-                                                        }
-                                                      }
-                                                    }
-                                                }
-                                                return const SizedBox.shrink();
-                                              },
+                                            child: snapshot.data[1] ? IconButton(
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
                                             ),
+                                            onPressed: () {
+                                              showDialog<String>(
+                                                context: context,
+                                                builder: (BuildContext context) =>
+                                                  AlertDialog(
+                                                    title: const Text('Delete this announcement?'),
+                                                    content: const Text('If you delete this announcement, it will be gone permenantly!'),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () => Navigator.pop(context),
+                                                        child: const Text('Cancel'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          deleteAnnouncement(
+                                                            {
+                                                              'announcement': snapshot.data[0][index]['announcement'],
+                                                              'date_time': snapshot.data[0][index]['date_time'],
+                                                              'description': snapshot.data[0][index]['description'],
+                                                            }
+                                                          );
+                                                          Navigator.pop(context);
+                                                          setState(() {});
+                                                        },
+                                                        child: const Text('OK'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            )
+                                            :
+                                             const SizedBox.shrink()
                                           ),
-                                        ]),
-                                      );
-                                    }));
+                                        ]
+                                      ),
+                                    );
+                                  }
+                                )
+                              );
                           } else {
                             return Container(
                               child:

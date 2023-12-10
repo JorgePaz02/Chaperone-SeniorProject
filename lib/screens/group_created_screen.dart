@@ -41,16 +41,7 @@ class GroupCreatedScreen extends State<groupcreated> {
   
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      appBar: null,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -79,7 +70,7 @@ class GroupCreatedScreen extends State<groupcreated> {
               child: Column(
                 children: <Widget>[
                   const Text(
-                    "Your Group Code Is:",
+                    "Your Group Code is:",
                     style: TextStyle(
                       fontSize: 36.0,
                       fontWeight: FontWeight.bold,
@@ -120,8 +111,6 @@ class GroupCreatedScreen extends State<groupcreated> {
     '/groupScreen' // Pass 'randomCode' as an argument
   );
 },
-
-
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors
                         .black, // Set the button background color to black

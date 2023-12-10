@@ -164,18 +164,22 @@ void startFetchingMemberLocations(BuildContext context) {
     String? user = "";
     return Scaffold(
      appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.grey[200],
         elevation: 0,
+        leading: const SizedBox.shrink(),
         title: FutureBuilder<String>(
-            future: groupName(),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data.toString(),
-                  style: const TextStyle(color: Colors.black));
-              }
-              return const Text('');
+          future: groupName(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.hasData) {
+              return Text(snapshot.data.toString(),
+                style: const TextStyle(
+                  color: Colors.black
+                )
+              );
             }
-          ),
+            return const Text('');
+          }
+        ),
       ),
       body: Center(
         child: GridView.count(
@@ -186,7 +190,6 @@ void startFetchingMemberLocations(BuildContext context) {
           children: <Widget>[
             _buildCircularButton(Icons.announcement, "Announcements", Colors.blue, () {
               Navigator.pushNamed(context, '/announceScreen');
-              print("Announcements button tapped");
             }),
             _buildCircularButton(Icons.access_time, "Itinerary", Colors.green, () {
               // Add functionality for Messages button here
@@ -197,9 +200,6 @@ void startFetchingMemberLocations(BuildContext context) {
             }),
             _buildCircularButton(Icons.health_and_safety, "Safety", Colors.red, () {
               print("Safety button tapped");
-            }),
-            _buildCircularButton(Icons.mail, "Invitations", Colors.orange, () {
-              print("Invitations button tapped");
             }),
             _buildCircularButton(Icons.group, "Member List", Colors.purple, () async {
               Navigator.pushNamed(context, "/membersScreen");

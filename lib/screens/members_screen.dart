@@ -17,16 +17,14 @@ class _MembersScreenState extends State<MembersScreen> {
 
     Future<bool> isLeader(user) async {
       return await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(user)
-          .get()
-          .then((value) async {
-        if (value.get("group leader") == true) {
-          return true;
-        } else {
-          return false;
-        }
-      });
+        .collection('Users')
+        .doc(user)
+        .get()
+        .then(
+          (value) async {
+            return value.get("group leader");
+          }
+        );
     }
 
     Future<dynamic> listMembers() async {
@@ -47,12 +45,12 @@ class _MembersScreenState extends State<MembersScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Colors.purple,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.black
+            color: Colors.white,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -62,7 +60,7 @@ class _MembersScreenState extends State<MembersScreen> {
           children: [
             Icon(
               Icons.group,
-              color: Colors.purple
+              color: Colors.white
             ),
             SizedBox(
               width: 10
@@ -70,22 +68,11 @@ class _MembersScreenState extends State<MembersScreen> {
             Text(
               'Members List',
               style: TextStyle(
-                color: Colors.black
+                color: Colors.white
               )
             ),
           ],
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.refresh,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              setState(() {});
-            },
-          ),
-        ],
       ),
       body: Align(
         alignment: Alignment.center,
@@ -130,6 +117,12 @@ class _MembersScreenState extends State<MembersScreen> {
                                             Colors.grey
                                           ),
                                         ),
+                                        color:
+                                        index % 2 == 0 
+                                        ? 
+                                        Colors.grey[100]
+                                        : 
+                                        Colors.grey[200],
                                       ),
                                       child: Row(children: <Widget>[
                                         Container(

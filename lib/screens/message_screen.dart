@@ -67,8 +67,7 @@ class _MessageScreenState extends State<MessageScreen> {
               ["${auth.currentUser!.displayName}:$text"]),
         });
       });
-
-      ;
+  
       messageController.clear();
     }
 

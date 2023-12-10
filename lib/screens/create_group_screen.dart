@@ -39,7 +39,9 @@ class CreateGroupScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(
+              height: 20.0
+            ),
             Padding(
               padding: EdgeInsets.all(16.0),
               child: TextField(
@@ -72,7 +74,8 @@ class CreateGroupScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(
-                height: 20.0), // Add spacing between dropdown and button
+              height: 20.0
+            ), // Add spacing between dropdown and button
             SizedBox(
               width: 200.0, // Set the desired width for the button
               height: 60.0, // Set the desired height for the button
@@ -81,14 +84,18 @@ class CreateGroupScreen extends StatelessWidget {
                   //////////FIX VARIABLES
 
                   //Navigator.pushNamed(context, '/groupCreated');
-                   Navigator.push(context,
-        MaterialPageRoute(
-          // ignore: unnecessary_new
-          builder: (context) => new groupcreated(name: groupname.text, passcode: number)));
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) =>
+                      new groupcreated(
+                        name: groupname.text,
+                        passcode: number
+                      )
+                    )
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
-                      Colors.black, // Set the button background color to black
+                    Colors.black, // Set the button background color to black
                 ),
                 child: const Text(
                   "Create Group",
