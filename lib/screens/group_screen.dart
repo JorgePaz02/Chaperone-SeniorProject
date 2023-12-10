@@ -172,7 +172,7 @@ void startFetchingMemberLocations(BuildContext context) {
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.hasData) {
               return Text(
-                "$groupcode :${snapshot.data.toString()}",
+                "${snapshot.data.toString()}: ${groupcode}",
                 style: const TextStyle(
                   color: Colors.black,
                 )

@@ -99,10 +99,10 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Container(
         width: double.infinity, // Fill the width of the screen
         height: double.infinity, // Fill the height of the screen
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image:
-                AssetImage('lib/assets/regular.png'), // Update the image path
+                AssetImage('lib/assets/MainScreen.png'), // Update the image path
             fit: BoxFit.cover, // Set to BoxFit.cover to fit the whole screen
             alignment:
                 Alignment.center, // Center the image within the container
@@ -112,14 +112,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text(
-                "Welcome Back!",
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
+              const SizedBox(
+                height: 300.0
               ),
-              const SizedBox(height: 30.0),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
