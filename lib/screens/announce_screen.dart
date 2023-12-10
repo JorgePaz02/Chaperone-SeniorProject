@@ -117,7 +117,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                 builder: (BuildContext context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return const CircularProgressIndicator();
+                      
                     default:
                       if (snapshot.hasError) {
                         return Text(
@@ -286,7 +286,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                   builder: (BuildContext context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
-                        return const CircularProgressIndicator();
+                       
                       default:
                         if (snapshot.hasError) {
                           return Text(

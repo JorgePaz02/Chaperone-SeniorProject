@@ -96,22 +96,22 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
     }
 
     void _showDialog(Widget child) {
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext context) => Container(
-        height: 216,
-        padding: const EdgeInsets.only(top: 6.0),
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
+      showCupertinoModalPopup<void>(
+        context: context,
+        builder: (BuildContext context) => Container(
+          height: 216,
+          padding: const EdgeInsets.only(top: 6.0),
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: SafeArea(
+            top: false,
+            child: child,
+          ),
         ),
-        color: CupertinoColors.systemBackground.resolveFrom(context),
-        child: SafeArea(
-          top: false,
-          child: child,
-        ),
-      ),
-    );
-  }
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -154,7 +154,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
               builder: (BuildContext context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
-                    return const CircularProgressIndicator();
+                    // return const CircularProgressIndicator();
                   default:
                     if (snapshot.hasError) {
                       return Text(
@@ -254,42 +254,43 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                                     ),
                                     Container (
                                       child:
-                                                     snapshot.data[1] ? IconButton(
-                                                      icon: const Icon(
-                                                        Icons.delete,
-                                                        color: Colors.red,
-                                                      ),
-                                                      onPressed: () {
-                                                        showDialog<String>(
-                                                          context: context,
-                                                          builder: (BuildContext context) => AlertDialog(
-                                                            title: const Text('Delete this event?'),
-                                                            content: const Text('If you delete this event, it will be gone permenantly!'),
-                                                            actions: <Widget>[
-                                                              TextButton(
-                                                                onPressed: () => Navigator.pop(context),
-                                                                child: const Text('Cancel'),
-                                                              ),
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  deleteItinerary({
-                                                                    'date_time': snapshot.data[0][index]['date_time'],
-                                                                    'description': snapshot.data[0][index]['description'],
-                                                                    'event': snapshot.data[0][index]['event'],
-                                                                  });
-                                                                  Navigator.pop(context);
-                                                                  setState(() {});
-                                                                },
-                                                                child: const Text('OK'),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      },
-                                                    )
-                                                    :
-                                                    const SizedBox.shrink()
-
+                                      snapshot.data[1]
+                                      ?
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                        onPressed: () {
+                                          showDialog<String>(
+                                            context: context,
+                                            builder: (BuildContext context) => AlertDialog(
+                                              title: const Text('Delete this event?'),
+                                              content: const Text('If you delete this event, it will be gone permenantly!'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(context),
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    deleteItinerary({
+                                                      'date_time': snapshot.data[0][index]['date_time'],
+                                                      'description': snapshot.data[0][index]['description'],
+                                                      'event': snapshot.data[0][index]['event'],
+                                                    });
+                                                    Navigator.pop(context);
+                                                    setState(() {});
+                                                  },
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      )
+                                      :
+                                      const SizedBox.shrink()
                                     ),
                                   ]
                                 ),
@@ -311,117 +312,124 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
               }
             ),
             Container(
-              padding: const EdgeInsets.all(16.0),
-              child: FutureBuilder<dynamic>(
-                future: isLeader(),
-                builder: (BuildContext context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return const CircularProgressIndicator();
-                    default:
-                      if (snapshot.hasError) {
-                        return Text(
-                          'Error: ${snapshot.error}',
-                          style: const TextStyle (
-                            color: Colors.red,
-                          ),
-                        );
-                      }
-                      else {
-                        if (snapshot.hasData) {
-                          if (snapshot.data) {
-                            return ElevatedButton(
-                              child: const Text('Add New Event'),
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.black, // Text color
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 40,
-                                  vertical: 16
+                padding: const EdgeInsets.all(16.0),
+                child: FutureBuilder<dynamic>(
+                  future: isLeader(),
+                  builder: (BuildContext context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      // case ConnectionState.waiting:
+                       
+                      default:
+                        if (snapshot.hasError) {
+                          return Text(
+                            'Error: ${snapshot.error}',
+                            style: const TextStyle(
+                              color: Colors.red,
+                            ),
+                          );
+                        } else {
+                          if (snapshot.hasData) {
+                            if (snapshot.data) {
+                              return ElevatedButton(
+                                child: const Text('Add New Event'),
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.black, // Text color
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 40, vertical: 16),
+                                  textStyle: const TextStyle(
+                                    fontSize: 18,
+                                  ),
                                 ),
-                                textStyle: const TextStyle(
-                                  fontSize: 18,
-                                ),
-                              ),
-                              onPressed: () {
-                                showDialog<String>(
-                                  context: context,
-                                  builder: (BuildContext context) => AlertDialog(
-                                    title: const Text('Make an Event!'),
-                                    content: Form(
-                                      child: SingleChildScrollView(
-                                        child: Column (
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget> [
-                                            CupertinoButton(
-                                              onPressed: () => _showDialog(
-                                                CupertinoDatePicker(
-                                                  initialDateTime: now,
-                                                  use24hFormat: false,
-                                                  onDateTimeChanged: (DateTime newTime) {
-                                                    setState(() => now = newTime);
-                                                  },
+                                onPressed: () {
+                                  showDialog<String>(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text('Make an Event!'),
+                                      content: Form(
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              CupertinoButton(
+                                                onPressed: () => _showDialog(
+                                                  CupertinoDatePicker(
+                                                    initialDateTime: now,
+                                                    use24hFormat: false,
+                                                    onDateTimeChanged:
+                                                        (DateTime newTime) {
+                                                      setState(
+                                                          () => now = newTime);
+                                                    },
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  DateFormat(
+                                                          'dd/MM/yyyy - hh:mm a')
+                                                      .format(now),
+                                                  style: const TextStyle(
+                                                    fontSize: 16.0,
+                                                  ),
                                                 ),
                                               ),
-                                              child: Text(
-                                                DateFormat('dd/MM/yyyy - hh:mm a').format(now),
-                                                style: const TextStyle(
-                                                  fontSize: 16.0,
+                                              TextFormField(
+                                                controller: eventController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border:
+                                                      UnderlineInputBorder(),
+                                                  labelText: 'Event',
                                                 ),
                                               ),
-                                            ),
-                                            TextFormField(
-                                              controller: eventController,
-                                              decoration: const InputDecoration(
-                                                border: UnderlineInputBorder(),
-                                                labelText: 'Event',
+                                              TextFormField(
+                                                controller:
+                                                    descriptionController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  border:
+                                                      UnderlineInputBorder(),
+                                                  labelText: 'Description',
+                                                ),
                                               ),
-                                            ),
-                                            TextFormField(
-                                              controller: descriptionController,
-                                              decoration: const InputDecoration(
-                                                border: UnderlineInputBorder(),
-                                                labelText: 'Description',
-                                              ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),      
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          addItinerary(
-                                            {
-                                              'date_time': Timestamp.fromDate(now),
-                                              'description': descriptionController.text,
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            addItinerary({
+                                              'date_time':
+                                                  Timestamp.fromDate(now),
+                                              'description':
+                                                  descriptionController.text,
                                               'event': eventController.text,
-                                            }
-                                          );
-                                          Navigator.pop(context);
-                                          eventController.text = '';
-                                          descriptionController.text = '';
-                                          setState(() {});
-                                        },
-                                        child: const Text('Submit'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
+                                            });
+                                            Navigator.pop(context);
+                                            eventController.text = '';
+                                            descriptionController.text = '';
+                                            setState(() {});
+                                          },
+                                          child: const Text('Submit'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            }
                           }
                         }
-                      }
                     }
                     return const SizedBox.shrink();
                   },
-              )
-            )
+                ))
           ],
         ),
       ),
