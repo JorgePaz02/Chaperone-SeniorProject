@@ -25,7 +25,7 @@ class CreateGroupScreen extends StatelessWidget {
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('lib/assets/CreateGroup.png'),
             fit: BoxFit.cover,
@@ -35,12 +35,19 @@ class CreateGroupScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(height: 40.0),
+              const Text(
+                "", //removal of fun about to begin
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20.0),
               Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TextField(
                   controller: groupname,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: "Group Name",
                     border: OutlineInputBorder(),
                   ),

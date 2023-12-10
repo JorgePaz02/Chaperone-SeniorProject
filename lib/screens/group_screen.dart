@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'dart:async'; // Import dart:async for Timer
 
 String? groupcode = "";
-  
+
 class GroupScreen extends StatefulWidget {
   @override
   _GroupScreenState createState() => _GroupScreenState();
 }
 
-  bool check = false;
-    
+bool check = false;
+
 class _GroupScreenState extends State<GroupScreen> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   late Timer timer;
@@ -27,7 +27,8 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   void dispose() {
-    timer.cancel(); // Cancel the timer to prevent memory leaks when the widget is disposed
+    timer
+        .cancel(); // Cancel the timer to prevent memory leaks when the widget is disposed
     super.dispose();
   }
 
@@ -36,7 +37,8 @@ class _GroupScreenState extends State<GroupScreen> {
       final FirebaseAuth auth = FirebaseAuth.instance;
       String currentUserDisplayName = auth.currentUser!.displayName!;
 
-      DocumentSnapshot userSnapshot = await db.collection('Users').doc(currentUserDisplayName).get();
+      DocumentSnapshot userSnapshot =
+          await db.collection('Users').doc(currentUserDisplayName).get();
 
       if (userSnapshot.exists) {
         String groupPasscode = userSnapshot.get('group');
@@ -49,218 +51,221 @@ class _GroupScreenState extends State<GroupScreen> {
       return ''; // Return an empty string or handle the error accordingly
     }
   }
-   Future<int> getRadius() async {
-      return await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-          return await FirebaseFirestore.instance
-              .collection('Groups')
-              .doc(value.get('group'))
-              .get()
-              .then((value2) {
-            return value2.get('radius');
-          });
-      });
-    }
 
-Future<List<MemberLocation>> fetchGroupMembersWithLocations(String passcode) async {
-  try {
-    List<MemberLocation> membersWithLocations = await getGroupMembersWithLocations(passcode);
-    return membersWithLocations;
-  } catch (e) {
-    print('Error fetching group members\' locations: $e');
-    return [];
+  Future<int> getRadius() async {
+    return await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then((value) async {
+      return await FirebaseFirestore.instance
+          .collection('Groups')
+          .doc(value.get('group'))
+          .get()
+          .then((value2) {
+        return value2.get('radius');
+      });
+    });
   }
-}
-void startFetchingMemberLocations(BuildContext context) {
-  const duration = Duration(seconds: 5); // Change this to your desired interval
-  timer = Timer.periodic(duration, (Timer t) async {
-    String passcode = await getGroupPasscode();
-    int radius = await getRadius();
-    if (passcode.isNotEmpty) {
-      List<MemberLocation> membersWithLocations = await fetchGroupMembersWithLocations(passcode);
-      if (membersWithLocations.isNotEmpty) {
-        printMemberLocations(membersWithLocations);
-        checkUserDistances(context, membersWithLocations, radius); // Pass BuildContext here
-      } else {
-        print('No member locations found.');
-      }
-    } else {
-      print('Failed to retrieve group passcode.');
+
+  Future<List<MemberLocation>> fetchGroupMembersWithLocations(
+      String passcode) async {
+    try {
+      List<MemberLocation> membersWithLocations =
+          await getGroupMembersWithLocations(passcode);
+      return membersWithLocations;
+    } catch (e) {
+      print('Error fetching group members\' locations: $e');
+      return [];
     }
-  });
-}
+  }
 
-
-
-
-
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    Future<String> groupName() async {
-      return await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-        groupcode = value.get('group');
-        return await FirebaseFirestore.instance
-            .collection('Groups')
-            .doc(value.get('group'))
-            .get()
-            .then((value2) {
-          return value2.get('groupname');
-        });
-      });
-    }
-
-    Future<void> checkifLeader() async {
-      final FirebaseAuth auth = FirebaseAuth.instance;
-      final db = FirebaseFirestore.instance;
-      db
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-        if (value.get("group leader") == true) {
-          setState(() {
-             
-            check = true;
-          });
-          
-         
+  void startFetchingMemberLocations(BuildContext context) {
+    const duration =
+        Duration(seconds: 5); // Change this to your desired interval
+    timer = Timer.periodic(duration, (Timer t) async {
+      String passcode = await getGroupPasscode();
+      int radius = await getRadius();
+      if (passcode.isNotEmpty) {
+        List<MemberLocation> membersWithLocations =
+            await fetchGroupMembersWithLocations(passcode);
+        if (membersWithLocations.isNotEmpty) {
+          printMemberLocations(membersWithLocations);
+          checkUserDistances(
+              context, membersWithLocations, radius); // Pass BuildContext here
         } else {
-          setState(() {
-                        
-            check = false;
-          });
-          
-          
+          print('No member locations found.');
         }
-      });
-    }
+      } else {
+        print('Failed to retrieve group passcode.');
+      }
+    });
+  }
 
-    Future<void> quitGroup(String user) async {
-      final FirebaseAuth auth = FirebaseAuth.instance;
-      final db = FirebaseFirestore.instance;
-      db.collection("Users").doc(user).get().then((value) async {
-        String passcode = value.get("group");
-        final docRef = db.collection("Groups").doc(passcode);
-        docRef.update({
-          "members": FieldValue.arrayRemove([auth.currentUser!.displayName]),
-        });
-        final docRef2 =
-            db.collection("Users").doc(auth.currentUser!.displayName);
-        docRef2.update({
-          "group": "",
-          "group leader": false,
-        });
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  Future<String> groupName() async {
+    return await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then((value) async {
+      groupcode = value.get('group');
+      return await FirebaseFirestore.instance
+          .collection('Groups')
+          .doc(value.get('group'))
+          .get()
+          .then((value2) {
+        return value2.get('groupname');
       });
-    }
+    });
+  }
+
+  Future<void> checkifLeader() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final db = FirebaseFirestore.instance;
+    db
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then((value) async {
+      if (value.get("group leader") == true) {
+        setState(() {
+          check = true;
+        });
+      } else {
+        setState(() {
+          check = false;
+        });
+      }
+    });
+  }
+
+  Future<void> quitGroup(Map<String, String> X) async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final db = FirebaseFirestore.instance;
+    db.collection("Users").doc(X['name']).get().then((value) async {
+      String passcode = value.get("group");
+      final docRef = db.collection("Groups").doc(passcode);
+      docRef.update({
+        "members": FieldValue.arrayRemove([auth.currentUser!.displayName]),
+      });
+      final docRef2 = db.collection("Users").doc(auth.currentUser!.displayName);
+      docRef2.update({
+        "group": "",
+        "group leader": false,
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     String? user = "";
     return Scaffold(
-     appBar: AppBar(
-        backgroundColor: Colors.grey[200],
+      extendBodyBehindAppBar: true, // Make the app bar transparent
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: const SizedBox.shrink(),
         title: FutureBuilder<String>(
-          future: groupName(),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.hasData) {
-              return Text(
-                "${snapshot.data.toString()}: ${groupcode}",
-                style: const TextStyle(
-                  color: Colors.black,
-                )
-              );
-            }
-            return const Text('');
-          }
-        ),
-      ),
-      body: Center(
-        child: GridView.count(
-          crossAxisCount: 2,
-          padding: const EdgeInsets.all(16.0),
-          mainAxisSpacing: 16.0,
-          crossAxisSpacing: 16.0,
-          children: <Widget>[
-            _buildCircularButton(Icons.announcement, "Announcements", Colors.blue, () {
-              Navigator.pushNamed(context, '/announceScreen');
-            }),
-            _buildCircularButton(Icons.access_time, "Itinerary", Colors.green, () {
-              // Add functionality for Messages button here
-              Navigator.pushNamed(context, "/itineraryScreen");
-            }),
-            _buildCircularButton(Icons.message, "Messages", Colors.green, () {
-              Navigator.pushNamed(context, "/messageScreen");
-            }),
-            _buildCircularButton(Icons.health_and_safety, "Safety", Colors.red, () {
-              print("Safety button tapped");
-            }),
-            _buildCircularButton(Icons.group, "Member List", Colors.purple, () async {
-              Navigator.pushNamed(context, "/membersScreen");
-
-              String passcode = await getGroupPasscode();
-              if (passcode.isNotEmpty) {
-                fetchGroupMembersWithLocations(passcode);
-              } else {
-                print('Failed to retrieve group passcode.');
+            future: groupName(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.hasData) {
+                return Text("$groupcode :${snapshot.data.toString()}",
+                    style: const TextStyle(
+                      color: Colors.black,
+                    ));
               }
+              return const Text('');
             }),
-            _buildCircularButton(Icons.settings, "Options", Colors.teal, () {
-              Navigator.pushNamed(context, '/radius_update');
-              print("Options button tapped");
-            }),
-            _buildCircularButton(
-              Icons.crisis_alert,
-              "QUIT GROUP",
-              const Color.fromARGB(255, 255, 8, 0),
-              () {
-                checkifLeader();
-                Future.delayed(const Duration(milliseconds: 500), () {
-                  showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Quitting?'),
-                      content: Text(
-                        check ?
-                        'If you quit, the entire group will be deleted! Are you sure you want to quit?'
-                        :
-                        'If you quit, you will no longer participate in this group! Are you sure you want to quit?'
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            if (check) {
-                              userReset(groupcode!);
-                            } else {
-                              user = auth.currentUser!.displayName;
-                              quitGroup(user!);
-                            }
-                            Future.delayed(
-                              const Duration(milliseconds: 3000), () {
-                                Navigator.pushNamed(context, "/home");
+      ),
+
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('lib/assets/WidgetScreen.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: GridView.count(
+            crossAxisCount: 2,
+            padding: const EdgeInsets.all(16.0),
+            mainAxisSpacing: 16.0,
+            crossAxisSpacing: 16.0,
+            children: <Widget>[
+              _buildCircularButton(
+                  Icons.announcement, "Announcements", Colors.blue, () {
+                Navigator.pushNamed(context, '/announceScreen');
+              }),
+              _buildCircularButton(Icons.access_time, "Itinerary", Colors.green,
+                  () {
+                Navigator.pushNamed(context, "/itineraryScreen");
+              }),
+              _buildCircularButton(Icons.message, "Messages", Colors.green, () {
+                Navigator.pushNamed(context, "/messageScreen");
+              }),
+              _buildCircularButton(
+                  Icons.health_and_safety, "Safety", Colors.red, () {
+                print("Safety button tapped");
+              }),
+              _buildCircularButton(Icons.group, "Member List", Colors.purple,
+                  () async {
+                Navigator.pushNamed(context, "/membersScreen");
+
+                String passcode = await getGroupPasscode();
+                if (passcode.isNotEmpty) {
+                  fetchGroupMembersWithLocations(passcode);
+                } else {
+                  print('Failed to retrieve group passcode.');
+                }
+              }),
+              _buildCircularButton(Icons.settings, "Options", Colors.teal, () {
+                Navigator.pushNamed(context, '/radius_update');
+                print("Options button tapped");
+              }),
+              _buildCircularButton(
+                Icons.crisis_alert,
+                "QUIT GROUP",
+                const Color.fromARGB(255, 255, 8, 0),
+                () {
+                  checkifLeader();
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    showDialog<String>(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('Quitting?'),
+                        content: Text(check
+                            ? 'If you quit, the entire group will be deleted! Are you sure you want to quit?'
+                            : 'If you quit, you will no longer participate in this group! Are you sure you want to quit?'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              if (check) {
+                                userReset(groupcode!);
+                              } else {
+                                user = auth.currentUser!.displayName;
+
+                                quitGroup({'name': user!});
                               }
-                            );
-                          },
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
-                });
-              },
-            )
-          ],
+                              Future.delayed(const Duration(milliseconds: 3000),
+                                  () {
+                                Navigator.pushNamed(context, "/home");
+                              });
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  });
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
