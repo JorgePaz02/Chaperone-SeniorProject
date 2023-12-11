@@ -1,3 +1,4 @@
+import 'package:app/screens/radius_update_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +91,7 @@ class _MapScreenState extends State<MapScreen> {
     _circles.clear();
 
     // Modify the constant marker offset value as needed for better visual representation
-    const double markerOffset = 0.000005;
+    const double markerOffset = 0.00001;
 
     // Assuming the leader's location is at the first index
     if (userLocations.isNotEmpty) {
@@ -144,21 +145,29 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('User Locations Map'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.radar),
+            onPressed: () {
+              // Display the radius update dialog when radar button is pressed
+              RadiusUpdateDialog.show(context);
+            },
+          ),
+        ],
       ),
       body: GoogleMap(
         onMapCreated: (controller) {
-  if (this.mounted) {
-    setState(() {
-      _mapController = controller;
-    });
-  }
-},
-
+          if (this.mounted) {
+            setState(() {
+              _mapController = controller;
+            });
+          }
+        },
         markers: _markers,
         circles: _circles,
         initialCameraPosition: CameraPosition(

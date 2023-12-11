@@ -43,7 +43,7 @@ class _MessageScreenState extends State<MessageScreen> {
       }
     }
 
-    Timer.periodic(const Duration(seconds: 5), (Timer t) => constantRefresh());   
+    Timer.periodic(const Duration(seconds: 5), (Timer t) => constantRefresh());
 
 Future<void> sendMessage(String text) async {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -78,50 +78,60 @@ Future<void> sendMessage(String text) async {
       appBar: AppBar(
         title: const Text("Messages"),
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: FutureBuilder<dynamic>(
-                future: listMessages(),
-                builder: (BuildContext context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data.length != 0) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: snapshot.data.length,
-                        prototypeItem: ListTile(
-                          title: Text(snapshot.data.first),
-                        ),
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(" ${snapshot.data[index]}"),
-                          );
-                        },
-                      );
-                    }
-                  }
-                  return const Text('');
-                }),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'lib/assets/Messages.png', // Update the path to your image
+            fit: BoxFit.cover,
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    controller: messageController,
-                    decoration: const InputDecoration(
-                      hintText: "Type your message...",
-                    ),
-                  ),
-                ),
-                IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: () {
-                      sendMessage(messageController.text);
+          Column(
+            children: <Widget>[
+              Expanded(
+                child: FutureBuilder<dynamic>(
+                    future: listMessages(),
+                    builder: (BuildContext context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data.length != 0) {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: snapshot.data.length,
+                            prototypeItem: ListTile(
+                              title: Text(snapshot.data.first),
+                            ),
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(" ${snapshot.data[index]}"),
+                              );
+                            },
+                          );
+                        }
+                      }
+                      return const Text('');
                     }),
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: messageController,
+                        decoration: const InputDecoration(
+                          hintText: "Type your message...",
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.send),
+                      onPressed: () {
+                        sendMessage(messageController.text);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
