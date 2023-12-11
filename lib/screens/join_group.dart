@@ -8,6 +8,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class JoinGroupScreen extends StatelessWidget {
   JoinGroupScreen({Key? key}) : super(key: key);
   final FirebaseAuth auth = FirebaseAuth.instance;
+
+
+
   @override
   Widget build(BuildContext context) {
     //Checks if user is in group already.
@@ -36,45 +39,48 @@ class JoinGroupScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 20.0), // Spacer
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: passcode,
-                  decoration: InputDecoration(
-                    labelText: "Group Code",
-                    border: OutlineInputBorder(),
+                SizedBox(height: 20.0), // Spacer
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: TextField(
+                    controller: passcode,
+                    decoration: InputDecoration(
+                      labelText: "Group Code",
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20.0), // Spacer
-              ElevatedButton(
-                onPressed: () {
-                  // Add your join group functionality here
-                  FirebaseFirestore.instance
-                      .collection('Groups')
-                      .doc(passcode.text)
-                      .get()
-                      .then((DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists) {
-                      joininggroup(
-                          passcode.text, auth.currentUser!.displayName);
-                      Navigator.pushNamed(context, '/groupScreen');
-                    }
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  textStyle: const TextStyle(fontSize: 20),
+                SizedBox(height: 20.0), // Spacer
+                ElevatedButton(
+                  onPressed: () {
+                    // Add your join group functionality here
+                    FirebaseFirestore.instance
+                        .collection('Groups')
+                        .doc(passcode.text)
+                        .get()
+                        .then((DocumentSnapshot documentSnapshot) {
+                      if (documentSnapshot.exists) {
+                        if (documentSnapshot.get("number of members") == documentSnapshot.get("members").length) {
+                          return Text("Group is already Full");
+                        } else {
+                          joininggroup(
+                              passcode.text, auth.currentUser!.displayName);
+                          Navigator.pushNamed(context, '/groupScreen');
+                        }
+                      }
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 16),
+                    textStyle: const TextStyle(fontSize: 20),
                 ),
                 child: const Text('Join Group'),
               ),
             ],
-          ),
-        ),
+          ),        ),
       ),
     );
   }
