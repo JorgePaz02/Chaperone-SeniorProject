@@ -39,20 +39,18 @@ class JoinGroupScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 20.0), // Spacer
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: passcode,
-                  decoration: InputDecoration(
-                    labelText: "Group Code",
-                    border: OutlineInputBorder(),
+                SizedBox(height: 20.0), // Spacer
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: TextField(
+                    controller: passcode,
+                    decoration: InputDecoration(
+                      labelText: "Group Code",
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              ),
-                SizedBox(
-                  height: 20.0
-                ), // Spacer
+                SizedBox(height: 20.0), // Spacer
                 ElevatedButton(
                   onPressed: () {
                     // Add your join group functionality here
@@ -78,12 +76,11 @@ class JoinGroupScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 16),
                     textStyle: const TextStyle(fontSize: 20),
-                  ),
-                  child: const Text('Join Group'),
                 ),
-              ],
-            ),
-        ),
+                child: const Text('Join Group'),
+              ),
+            ],
+          ),        ),
       ),
     );
   }
