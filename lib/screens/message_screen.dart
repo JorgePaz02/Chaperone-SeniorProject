@@ -37,39 +37,42 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   Widget build(BuildContext context) {
     void constantRefresh() {
+      
+      if(this.mounted){
       setState(() {});
-    }
-
-    Timer.periodic(const Duration(seconds: 5), (Timer t) => constantRefresh());
-
-    void _submitMessage() {
-      final message = messageController.text;
-      if (message.isNotEmpty) {
-        setState(() {
-          messages.add(message);
-          messageController.clear();
-        });
       }
     }
 
-    Future<void> sendMessage(String text) async {
-      final FirebaseAuth auth = FirebaseAuth.instance;
-      final db = FirebaseFirestore.instance;
-      db
-          .collection("Users")
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-        String passcode = value.get("group");
-        final docRef = db.collection("Groups").doc(passcode);
-        docRef.update({
-          "messages":
-              FieldValue.arrayUnion(["${auth.currentUser!.displayName}:$text"]),
-        });
-      });
+    Timer.periodic(const Duration(seconds: 1), (Timer t) => constantRefresh());
 
-      messageController.clear();
-    }
+Future<void> sendMessage(String text) async {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final db = FirebaseFirestore.instance;
+  final currentUser = auth.currentUser;
+
+  if (text.isNotEmpty && currentUser != null) { // Check if the message is not empty
+    final userDoc = await db.collection("Users").doc(currentUser.displayName).get();
+    final passcode = userDoc.get("group");
+    final docRef = db.collection("Groups").doc(passcode);
+    final timestamp = DateTime.now();
+    final formattedTimestamp = Timestamp.fromDate(timestamp);
+
+    String senderName = currentUser.displayName ?? '';
+    String result = senderName.substring(0, senderName.indexOf('@'));
+
+    await docRef.update({
+      "messages": FieldValue.arrayUnion(["$result:$text at $timestamp"]), // Including timestamp in the message
+    });
+    messageController.clear();
+  } else {
+    // Handle case where the message is empty
+    // You can show a snackbar, toast, or any other UI indication to the user
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter a non-empty message')),
+    );
+  }
+}
+
 
     return Scaffold(
       appBar: AppBar(

@@ -52,33 +52,52 @@ class JoinGroupScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20.0), // Spacer
                 ElevatedButton(
-                  onPressed: () {
-                    // Add your join group functionality here
-                    FirebaseFirestore.instance
-                        .collection('Groups')
-                        .doc(passcode.text)
-                        .get()
-                        .then((DocumentSnapshot documentSnapshot) {
-                      if (documentSnapshot.exists) {
-                        if (documentSnapshot.get("number of members") == documentSnapshot.get("members").length) {
-                          return Text("Group is already Full");
-                        } else {
-                          joininggroup(
-                              passcode.text, auth.currentUser!.displayName);
-                          Navigator.pushNamed(context, '/groupScreen');
-                        }
-                      }
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 16),
-                    textStyle: const TextStyle(fontSize: 20),
+  onPressed: () {
+    // Add your join group functionality here
+    FirebaseFirestore.instance
+        .collection('Groups')
+        .doc(passcode.text)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        if (documentSnapshot.get("number of members") ==
+            documentSnapshot.get("members").length) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(
+                  'Group is already Full',
+                  style: TextStyle(color: Colors.red), // Red text color
                 ),
-                child: const Text('Join Group'),
-              ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          joininggroup(
+              passcode.text, auth.currentUser!.displayName);
+          Navigator.pushNamed(context, '/groupScreen');
+        }
+      }
+    });
+  },
+  style: ElevatedButton.styleFrom(
+    foregroundColor: Colors.white,
+    backgroundColor: Colors.black,
+    padding:
+        const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+    textStyle: const TextStyle(fontSize: 20),
+  ),
+  child: const Text('Join Group'),
+),
             ],
           ),        ),
       ),

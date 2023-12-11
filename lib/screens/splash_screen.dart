@@ -13,18 +13,20 @@ class _SplashScreenState extends State<SplashScreen> {
   bool _isVideoInitialized = false;
 
   @override
-  void initState() {
+    void initState() {
     super.initState();
     _controller = VideoPlayerController.asset('lib/assets/splash_video.mp4')
       ..initialize().then((_) {
-        setState(() {
-          _isVideoInitialized = true;
-          _controller.play();
-          Future.delayed(const Duration(seconds: 5), () {
-            // Navigate to the main screen
-            Navigator.pushReplacementNamed(context, '/mainscreen');
+        if (this.mounted) {
+          setState(() {
+            _isVideoInitialized = true;
+            _controller.play();
+            Future.delayed(const Duration(seconds: 5), () {
+              // Navigate to the main screen
+              Navigator.pushReplacementNamed(context, '/mainscreen');
+            });
           });
-        });
+        }
       });
   }
 

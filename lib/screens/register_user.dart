@@ -20,8 +20,7 @@ class _RegistrationState extends State<Registration> {
     final passwordController = TextEditingController();
 
     return Scaffold(
-      extendBodyBehindAppBar:
-          true, // Add this line to extend body behind the app bar
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -33,12 +32,16 @@ class _RegistrationState extends State<Registration> {
         ),
       ),
       body: Stack(
-        fit: StackFit.expand,
         children: [
+          // Background Image
           Image.asset(
-            'lib/assets/regular.png', // Update the path to your image
+            'lib/assets/regular.png', // Replace with the actual path to your image
             fit: BoxFit.cover,
+            height: double.infinity,
+            width: double.infinity,
+            alignment: Alignment.center,
           ),
+
           SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -50,9 +53,7 @@ class _RegistrationState extends State<Registration> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(
-                  height: 30.0,
-                ),
+                const SizedBox(height: 30.0),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: TextField(
@@ -87,56 +88,62 @@ class _RegistrationState extends State<Registration> {
                       User? updateUser = FirebaseAuth.instance.currentUser;
                       updateUser!.updateDisplayName(emailController.text);
                       userSetup(emailController.text);
+                      // Send email verification
+                      await updateUser.sendEmailVerification();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => LoginScreen()));
                     } on FirebaseAuthException catch (e) {
-                      switch (e.code) {
-                        case 'email-already-in-use':
-                          setState(() {
-                            emailError =
-                                'The email address provided is already in use for an account.';
-                            passwordError = '';
-                          });
-                          break;
-                        case 'invalid-email':
-                          setState(() {
-                            emailError =
-                                'The email address provided is invalid.';
-                            passwordError = '';
-                          });
-                          break;
-                        case 'weak-password':
-                          setState(() {
-                            passwordError =
-                                'The password provided is not strong enough for use.';
-                            emailError = '';
-                          });
-                          break;
-                        case 'channel-error':
-                          setState(() {
-                            emailError = emailController.text.isEmpty
-                                ? 'The email address provided is empty.'
-                                : '';
-                            passwordError = passwordController.text.isEmpty
-                                ? 'The password provided is empty.'
-                                : '';
-                          });
-                          break;
+                      if (this.mounted) {
+                        switch (e.code) {
+                          case 'email-already-in-use':
+                            setState(() {
+                              emailError =
+                                  'The email address provided is already in use for an account.';
+                              passwordError = '';
+                            });
+                            break;
+                          case 'invalid-email':
+                            setState(() {
+                              emailError =
+                                  'The email address provided is invalid.';
+                              passwordError = '';
+                            });
+                            break;
+                          case 'weak-password':
+                            setState(() {
+                              passwordError =
+                                  'The password provided is not strong enough for use.';
+                              emailError = '';
+                            });
+                            break;
+                          case 'channel-error':
+                            setState(() {
+                              emailError = emailController.text.isEmpty
+                                  ? 'The email address provided is empty.'
+                                  : '';
+                              passwordError = passwordController.text.isEmpty
+                                  ? 'The password provided is empty.'
+                                  : '';
+                            });
+                            break;
+                        }
                       }
                     } catch (e) {
-                      setState(() {
-                        passwordError =
-                            'There has been an error. Please try again.';
-                        emailError =
-                            'There has been an error. Please try again.';
-                      });
+                      if (this.mounted) {
+                        setState(() {
+                          passwordError =
+                              'There has been an error. Please try again.';
+                          emailError =
+                              'There has been an error. Please try again.';
+                        });
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Colors.black, // Text color
+                    backgroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 16),
                     textStyle: const TextStyle(
