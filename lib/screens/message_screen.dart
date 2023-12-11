@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -37,42 +39,44 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   Widget build(BuildContext context) {
     void constantRefresh() {
-      
-      if(this.mounted){
-      setState(() {});
+      if (this.mounted) {
+        setState(() {});
       }
     }
 
     Timer.periodic(const Duration(seconds: 1), (Timer t) => constantRefresh());
 
-Future<void> sendMessage(String text) async {
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  final db = FirebaseFirestore.instance;
-  final currentUser = auth.currentUser;
+    Future<void> sendMessage(String text) async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      final db = FirebaseFirestore.instance;
+      final currentUser = auth.currentUser;
 
-  if (text.isNotEmpty && currentUser != null) { // Check if the message is not empty
-    final userDoc = await db.collection("Users").doc(currentUser.displayName).get();
-    final passcode = userDoc.get("group");
-    final docRef = db.collection("Groups").doc(passcode);
-    final timestamp = DateTime.now();
-    final formattedTimestamp = Timestamp.fromDate(timestamp);
+      if (text.isNotEmpty && currentUser != null) {
+        // Check if the message is not empty
+        final userDoc =
+            await db.collection("Users").doc(currentUser.displayName).get();
+        final passcode = userDoc.get("group");
+        final docRef = db.collection("Groups").doc(passcode);
+        final timestamp = DateTime.now();
+        String datetime = DateFormat('dd/MM/yyyy - hh:mm a').format(timestamp);
 
-    String senderName = currentUser.displayName ?? '';
-    String result = senderName.substring(0, senderName.indexOf('@'));
+        String senderName = currentUser.displayName ?? '';
+        String result = senderName.substring(0, senderName.indexOf('@'));
 
-    await docRef.update({
-      "messages": FieldValue.arrayUnion(["$result:$text at $timestamp"]), // Including timestamp in the message
-    });
-    messageController.clear();
-  } else {
-    // Handle case where the message is empty
-    // You can show a snackbar, toast, or any other UI indication to the user
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Please enter a non-empty message')),
-    );
-  }
-}
-
+        await docRef.update({
+          "messages": FieldValue.arrayUnion([
+            "$result:$text \n $datetime"
+          ]), // Including timestamp in the message
+        });
+        messageController.clear();
+      } else {
+        // Handle case where the message is empty
+        // You can show a snackbar, toast, or any other UI indication to the user
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter a non-empty message')),
+        );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -100,9 +104,20 @@ Future<void> sendMessage(String text) async {
                               title: Text(snapshot.data.first),
                             ),
                             itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(" ${snapshot.data[index]}"),
-                              );
+                              const ls = LineSplitter();
+                              final sampleTextLines =
+                                  ls.convert(snapshot.data[index]);
+
+                              if (sampleTextLines.length > 1) {
+                                return ListTile(
+                                  title: Text(" ${sampleTextLines[0]}"),
+                                  subtitle: Text(" ${sampleTextLines[1]}"),
+                                );
+                              } else {
+                                return ListTile(
+                                  title: Text(" ${sampleTextLines[0]}"),
+                                );
+                              }
                             },
                           );
                         }
