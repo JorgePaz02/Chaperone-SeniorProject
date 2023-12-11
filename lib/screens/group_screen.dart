@@ -158,19 +158,21 @@ class _GroupScreenState extends State<GroupScreen> {
   }
 
   @override
+  
   Widget build(BuildContext context) {
     String? user = "";
+   
     return Scaffold(
-      extendBodyBehindAppBar: true, // Make the app bar transparent
+      // extendBodyBehindAppBar: true, // Make the app bar transparent
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: const SizedBox.shrink(),
         title: FutureBuilder<String>(
             future: groupName(),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               if (snapshot.hasData) {
-                return Text("$groupcode :${snapshot.data.toString()}",
+                return Text("${snapshot.data.toString()}: $groupcode",
                     style: const TextStyle(
                       color: Colors.black,
                     ));
@@ -180,7 +182,7 @@ class _GroupScreenState extends State<GroupScreen> {
       ),
 
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('lib/assets/WidgetScreen.png'),
             fit: BoxFit.cover,
