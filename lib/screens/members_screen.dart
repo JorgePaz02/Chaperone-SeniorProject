@@ -79,7 +79,6 @@ class _MembersScreenState extends State<MembersScreen> {
                     builder: (BuildContext context, snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
-                          return const CircularProgressIndicator();
                         default:
                           if (snapshot.hasError) {
                             return Text(
@@ -99,33 +98,31 @@ class _MembersScreenState extends State<MembersScreen> {
                                         return Container(
                                           decoration: BoxDecoration(
                                             border: Border(
-                                              top: const BorderSide(
-                                                  color: Colors.grey),
+                                              top: const BorderSide(color: Colors.grey),
                                               bottom: BorderSide(
-                                                  color: index <
-                                                          snapshot.data.length -
-                                                              1
-                                                      ? Colors.transparent
-                                                      : Colors.grey),
+                                              color:
+                                                index < snapshot.data.length - 1
+                                                ? 
+                                                Colors.transparent
+                                                : 
+                                                Colors.grey
+                                              ),
                                             ),
-                                            color: index % 2 == 0
-                                                ? Colors.grey[100]
-                                                : Colors.grey[200],
+                                            color:
+                                            index % 2 == 0
+                                            ? 
+                                            Colors.grey[100]
+                                            : 
+                                            Colors.grey[200],
                                           ),
                                           child: Row(children: <Widget>[
                                             Container(
-                                              padding:
-                                                  const EdgeInsets.all(4.0),
+                                              padding: const EdgeInsets.all(4.0),
                                               child: FutureBuilder<dynamic>(
-                                                future: isLeader(snapshot
-                                                    .data[index]['name']),
-                                                builder: (BuildContext context,
-                                                    snapshot) {
-                                                  switch (snapshot
-                                                      .connectionState) {
-                                                    case ConnectionState
-                                                          .waiting:
-                                                      return const CircularProgressIndicator();
+                                                future: isLeader(snapshot.data[index]),
+                                                builder: (BuildContext context, snapshot) {
+                                                  switch (snapshot.connectionState) {
+                                                    case ConnectionState.waiting:
                                                     default:
                                                       if (snapshot.hasError) {
                                                         return Text(
@@ -139,8 +136,7 @@ class _MembersScreenState extends State<MembersScreen> {
                                                         if (snapshot.hasData) {
                                                           if (snapshot.data) {
                                                             return const Icon(
-                                                              Icons
-                                                                  .person_4_rounded,
+                                                              Icons.person_4_rounded,
                                                               color:
                                                                   Colors.black,
                                                             );
@@ -148,8 +144,7 @@ class _MembersScreenState extends State<MembersScreen> {
                                                         }
                                                       }
                                                   }
-                                                  return const SizedBox
-                                                      .shrink();
+                                                  return const SizedBox.shrink();
                                                 },
                                               ),
                                             ),
@@ -160,81 +155,70 @@ class _MembersScreenState extends State<MembersScreen> {
                                               child: Column(children: <Widget>[
                                                 TextButton(
                                                   child: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
+                                                    alignment: Alignment.centerLeft,
                                                     child: Text(
-                                                        '${index + 1}. ${snapshot.data[index]['name']}',
-                                                        style: const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
+                                                      '${index + 1}. ${snapshot.data[index]}',
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:FontWeight.bold
+                                                      )
+                                                    ),
                                                   ),
                                                   onPressed: () {
                                                     showDialog<String>(
                                                       context: context,
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          AlertDialog(
+                                                      builder: (BuildContext context) =>
+                                                      AlertDialog(
                                                         title: Text(
-                                                            snapshot.data[index]
-                                                                ['name']),
-                                                        content: FutureBuilder<
-                                                            dynamic>(
-                                                          future: isLeader(
-                                                              snapshot.data[
-                                                                      index]
-                                                                  ['name']),
-                                                          builder: (BuildContext
-                                                                  context,
-                                                              snapshot) {
-                                                            switch (snapshot
-                                                                .connectionState) {
-                                                              case ConnectionState
-                                                                    .waiting:
-                                                                return const CircularProgressIndicator();
+                                                          snapshot.data[index]
+                                                        ),
+                                                        content: FutureBuilder<dynamic>(
+                                                          future: isLeader(snapshot.data[index]),
+                                                          builder: (BuildContext context, snapshot) {
+                                                            switch (snapshot.connectionState) {
+                                                              case ConnectionState.waiting:
                                                               default:
-                                                                if (snapshot
-                                                                    .hasError) {
+                                                                if (snapshot.hasError) {
                                                                   return Text(
                                                                     'Error: ${snapshot.error}',
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      color: Colors
-                                                                          .red,
+                                                                    style: const TextStyle(
+                                                                      color: Colors.red,
                                                                     ),
                                                                   );
                                                                 } else {
-                                                                  if (snapshot
-                                                                      .hasData) {
-                                                                    return Text((snapshot
-                                                                            .data
-                                                                        ? 'They are a leader of your group!'
-                                                                        : ''));
+                                                                  if (snapshot.hasData) {
+                                                                    return Text(
+                                                                      (snapshot.data
+                                                                      ? 
+                                                                      'They are a leader of your group!'
+                                                                      : 
+                                                                      'They are a fellow member of your group!'
+                                                                      )
+                                                                    );
                                                                   }
                                                                 }
                                                             }
-                                                            return const SizedBox
-                                                                .shrink();
+                                                            return const SizedBox.shrink();
                                                           },
                                                         ),
                                                         actions: <Widget>[
                                                           TextButton(
                                                             onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
+                                                              Navigator.pop(context);
                                                             },
                                                             child: const Text(
-                                                                'OK'),
+                                                              'OK'
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
                                                     );
                                                   },
                                                 ),
-                                              ]),
-                                              padding:
-                                                  const EdgeInsets.all(4.0),
+                                              ]
+                                            ),
+                                            padding:
+                                              const EdgeInsets.all(4.0),
                                             ),
                                             Expanded(
                                               child: Container(),
@@ -245,8 +229,9 @@ class _MembersScreenState extends State<MembersScreen> {
                                 );
                               } else {
                                 return Container(
-                                  child:
-                                      const Text('Huh? How did this happen...'),
+                                  child: const Text(
+                                    'Huh? How did this happen...'
+                                  ),
                                   padding: const EdgeInsets.all(16.0),
                                 );
                               }
@@ -254,7 +239,8 @@ class _MembersScreenState extends State<MembersScreen> {
                           }
                       }
                       return const SizedBox.shrink();
-                    }),
+                    }
+                  ),
               ],
             ),
           ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,15 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    void constantRefresh() {
+      if (this.mounted) {
+        setState(() {
+        });
+      }
+    }
+        Timer.periodic(const Duration(seconds: 1), (Timer t) => constantRefresh());
+
     final FirebaseAuth auth = FirebaseAuth.instance;
 
     Future<bool> isLeader() async {

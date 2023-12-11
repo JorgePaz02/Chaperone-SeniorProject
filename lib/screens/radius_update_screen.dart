@@ -6,6 +6,10 @@ class RadiusUpdateDialog {
   static Future<void> show(BuildContext context) async {
     TextEditingController radiusController = TextEditingController();
 
+    bool isTextFieldEmpty() {
+      return radiusController.text.trim().isEmpty;
+    }
+
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -26,12 +30,14 @@ class RadiusUpdateDialog {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    int newRadius =
-                        int.tryParse(radiusController.text) ?? 0;
-                    updateRadius(newRadius);
-                    Navigator.pop(context); // Close the dialog after update
-                  },
+                  onPressed: isTextFieldEmpty()
+                      ? null
+                      : () {
+                          int newRadius =
+                              int.tryParse(radiusController.text) ?? 0;
+                          updateRadius(newRadius);
+                          Navigator.pop(context); // Close the dialog after update
+                        },
                   child: Text('Update'),
                 ),
               ],

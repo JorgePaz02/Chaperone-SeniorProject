@@ -14,9 +14,19 @@ class AnnouncementScreen extends StatefulWidget {
 class _AnnouncementScreenState extends State<AnnouncementScreen> {
   final TextEditingController announcementController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-
-  @override
+ @override
   Widget build(BuildContext context) {
+    void constantRefresh() {
+      if (this.mounted) {
+        setState(() {
+          // Your state changes go here
+        });
+      }
+    }
+
+    Timer.periodic(const Duration(seconds: 1), (Timer t) => constantRefresh());
+
+    
     final FirebaseAuth auth = FirebaseAuth.instance;
     Future<bool> isLeader() async {
       return await FirebaseFirestore.instance

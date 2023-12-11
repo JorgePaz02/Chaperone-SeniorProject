@@ -2,18 +2,25 @@ import 'package:app/UserInfo/groupmodel.dart';
 import 'package:app/screens/group_created_screen.dart';
 import 'package:flutter/material.dart';
 
-class CreateGroupScreen extends StatelessWidget {
+class CreateGroupScreen extends StatefulWidget {
+  CreateGroupScreen({Key? key}) : super(key: key);
+
+  @override
+  _CreateGroupScreenState createState() => _CreateGroupScreenState();
+}
+
+class _CreateGroupScreenState extends State<CreateGroupScreen> {
   final groupname = TextEditingController();
   int number = 0;
-
-  CreateGroupScreen({Key? key}) : super(key: key);
+  bool isMaxMembersSelected = false; // Track if max members have been selected
+  bool isGroupNameEntered = false; // Track if group name has been entered
 
   final List<int> maxMembersOptions = List.generate(19, (index) => index + 2);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true, // Make the app bar transparent
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -47,6 +54,11 @@ class CreateGroupScreen extends StatelessWidget {
                 padding: EdgeInsets.all(16.0),
                 child: TextField(
                   controller: groupname,
+                  onChanged: (_) {
+                    setState(() {
+                      isGroupNameEntered = groupname.text.isNotEmpty;
+                    });
+                  },
                   decoration: InputDecoration(
                     labelText: "Group Name",
                     border: OutlineInputBorder(),
@@ -68,7 +80,10 @@ class CreateGroupScreen extends StatelessWidget {
                     );
                   }).toList(),
                   onChanged: (newValue) {
-                    number = newValue!.toInt();
+                    setState(() {
+                      number = newValue!;
+                      isMaxMembersSelected = true; // Set selection flag
+                    });
                   },
                 ),
               ),
@@ -77,17 +92,19 @@ class CreateGroupScreen extends StatelessWidget {
                 width: 200.0,
                 height: 60.0,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => new groupcreated(
-                          name: groupname.text,
-                          passcode: number,
-                        ),
-                      ),
-                    );
-                  },
+                  onPressed: isMaxMembersSelected && isGroupNameEntered
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => groupcreated(
+                                name: groupname.text,
+                                passcode: number,
+                              ),
+                            ),
+                          );
+                        }
+                      : null, // Disable button if requirements are not met
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                   ),
@@ -106,6 +123,7 @@ class CreateGroupScreen extends StatelessWidget {
       ),
     );
   }
+
 
   String getText() {
     return groupname.text;

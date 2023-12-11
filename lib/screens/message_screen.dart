@@ -43,7 +43,7 @@ class _MessageScreenState extends State<MessageScreen> {
       }
     }
 
-    Timer.periodic(const Duration(seconds: 5), (Timer t) => constantRefresh());
+    Timer.periodic(const Duration(seconds: 1), (Timer t) => constantRefresh());
 
 Future<void> sendMessage(String text) async {
   final FirebaseAuth auth = FirebaseAuth.instance;

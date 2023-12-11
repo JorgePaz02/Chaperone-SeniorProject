@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:app/screens/message_screen.dart';
 import 'package:app/screens/radius_update_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,6 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'getUserLocation.dart'; // Assuming this file contains your getUserLocation function
 
+
+ Future<bool> isLeader() async {
+      return await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then(
+          (value) async {
+            return value.get("group leader");
+          }
+        );
+    }
+    
 Future<String> getGroupPasscode() async {
   try {
     final FirebaseAuth auth = FirebaseAuth.instance;
@@ -51,22 +67,68 @@ class _MapScreenState extends State<MapScreen> {
   GoogleMapController? _mapController;
   Set<Marker> _markers = Set<Marker>();
   Set<Circle> _circles = Set<Circle>();
-  late double _circleRadius;
+  late double _circleRadius = 0.0; // Initialize _circleRadius with a default value
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    // Call the function to retrieve user locations and display them on the map
-    getUserLocations();
-    // Fetch circle radius and set it in the state
-    getRadius().then((value) {
-      setState(() {
-        _circleRadius = value.toDouble(); // Convert int to double
-      });
-    });
 
-    // Set the initial camera position to the default location (0,0) before the leader's location is obtained
+    if (this.mounted) {
+    getUserLocations();
+
+    // Fetch circle radius and set it in the state initially
+
+      getRadius().then((value) {
+        if (this.mounted) {
+          setState(() {
+            _circleRadius = value.toDouble(); // Convert int to double
+          });
+        }
+      });
+    }
+
+    _startPeriodicUpdates();
+
     _setInitialCameraPosition();
+  }
+
+ void _startPeriodicUpdates() {
+  const updateInterval = Duration(seconds: 30);
+
+  void updateUserLocations() async {
+    if (this.mounted) {
+      try {
+        await getUserLocations();
+
+        // Other update code...
+        await getRadius().then((value) {
+          if (this.mounted) {
+            setState(() {
+              _circleRadius = value.toDouble();
+              // Other state updates if needed
+            });
+          }
+        });
+      } catch (e) {
+        print('Error updating user locations: $e');
+        // Handle the error accordingly
+      }
+    } else {
+      _timer.cancel(); // Cancel the timer if the widget is disposed
+    }
+  }
+
+  _timer = Timer.periodic(updateInterval, (timer) {
+    updateUserLocations();
+  });
+}
+
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   void _setInitialCameraPosition() {
@@ -91,7 +153,7 @@ class _MapScreenState extends State<MapScreen> {
     _circles.clear();
 
     // Modify the constant marker offset value as needed for better visual representation
-    const double markerOffset = 0.00001;
+    const double markerOffset = 0;
 
     // Assuming the leader's location is at the first index
     if (userLocations.isNotEmpty) {
@@ -104,7 +166,7 @@ class _MapScreenState extends State<MapScreen> {
             leaderLocation.location.longitude,
           ),
           radius: _circleRadius,
-          strokeWidth: 2,
+          strokeWidth: 1,
           strokeColor: Colors.blue,
           fillColor: Colors.blue.withOpacity(0.2),
         ),
@@ -145,36 +207,45 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('User Locations Map'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.radar),
-            onPressed: () {
-              // Display the radius update dialog when radar button is pressed
-              RadiusUpdateDialog.show(context);
-            },
-          ),
-        ],
-      ),
-      body: GoogleMap(
-        onMapCreated: (controller) {
-          if (this.mounted) {
-            setState(() {
-              _mapController = controller;
-            });
-          }
-        },
-        markers: _markers,
-        circles: _circles,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(0, 0),
-          zoom: 12.0,
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('User Locations Map'),
+      actions: [
+        FutureBuilder<bool>(
+          future: isLeader(), // Check if the current user is a leader
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data == true) {
+              // Show the radar icon only if the user is a leader
+              return IconButton(
+                icon: Icon(Icons.radar),
+                onPressed: () {
+                  RadiusUpdateDialog.show(context);
+                },
+              );
+            } else {
+              return SizedBox(); // Return an empty SizedBox if not a leader
+            }
+          },
         ),
+      ],
+    ),
+    body: GoogleMap(
+      onMapCreated: (controller) {
+        if (this.mounted) {
+          setState(() {
+            _mapController = controller;
+          });
+        }
+      },
+      markers: _markers,
+      circles: _circles,
+      initialCameraPosition: CameraPosition(
+        target: LatLng(0, 0),
+        zoom: 12.0,
       ),
-    );
-  }
+    ),
+  );
+}
 }
