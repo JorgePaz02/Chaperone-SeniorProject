@@ -62,7 +62,7 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image:
                 AssetImage('lib/assets/JoinOrAdd.png'), // Update the image path
