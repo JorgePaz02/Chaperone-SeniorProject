@@ -70,52 +70,55 @@ class _RegistrationState extends State<Registration> {
             ),
             ElevatedButton(
               onPressed: () async {
-              try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: emailController.text,
-                  password: passwordController.text,
-                );
-                User? updateUser = FirebaseAuth.instance.currentUser;
-                updateUser!.updateDisplayName(emailController.text);
-                userSetup(emailController.text);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-              } on FirebaseAuthException catch (e) {
-                switch (e.code) {
-                  case 'email-already-in-use':
-                    setState(() {
-                      emailError = 'The email address provided is already in use for an account.';
-                      passwordError = '';
-                    });
-                    break;
-                  case 'invalid-email':
-                    setState(() {
-                      emailError = 'The email address provided is invalid.';
-                      passwordError = '';
-                    });
-                    break;
-                  case 'weak-password':
-                    setState(() {
-                      passwordError = 'The password provided is not strong enough for use.';
-                      emailError = '';
-                    });
-                    break;
-                  case 'channel-error':
-                    setState(() {
-                      emailError = emailController.text.isEmpty ? 'The email address provided is empty.' : '';
-                      passwordError = passwordController.text.isEmpty ? 'The password provided is empty.' : '';
-                    });
-                    break;     
-                }
-              } catch (e) {
-                setState(() {
-                  passwordError = 'There has been an error. Please try again.';
-                  emailError = 'There has been an error. Please try again.';
-                });
-              }
-        
-                // Add your Sign up button functionality here
-
-              },
+  try {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+    User? updateUser = FirebaseAuth.instance.currentUser;
+    updateUser!.updateDisplayName(emailController.text);
+    userSetup(emailController.text);
+    // Send email verification
+    await updateUser.sendEmailVerification();
+    Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+  } on FirebaseAuthException catch (e) {
+    if (this.mounted) {
+      switch (e.code) {
+        case 'email-already-in-use':
+          setState(() {
+            emailError = 'The email address provided is already in use for an account.';
+            passwordError = '';
+          });
+          break;
+        case 'invalid-email':
+          setState(() {
+            emailError = 'The email address provided is invalid.';
+            passwordError = '';
+          });
+          break;
+        case 'weak-password':
+          setState(() {
+            passwordError = 'The password provided is not strong enough for use.';
+            emailError = '';
+          });
+          break;
+        case 'channel-error':
+          setState(() {
+            emailError = emailController.text.isEmpty ? 'The email address provided is empty.' : '';
+            passwordError = passwordController.text.isEmpty ? 'The password provided is empty.' : '';
+          });
+          break;     
+      }
+    }
+  } catch (e) {
+    if (this.mounted) {
+      setState(() {
+        passwordError = 'There has been an error. Please try again.';
+        emailError = 'There has been an error. Please try again.';
+      });
+    }
+  }
+},
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white, backgroundColor: Colors.black, // Text color
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),

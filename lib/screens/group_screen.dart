@@ -49,21 +49,34 @@ class _GroupScreenState extends State<GroupScreen> {
       return ''; // Return an empty string or handle the error accordingly
     }
   }
-   Future<int> getRadius() async {
-      return await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
-          return await FirebaseFirestore.instance
-              .collection('Groups')
-              .doc(value.get('group'))
-              .get()
-              .then((value2) {
-            return value2.get('radius');
-          });
-      });
+  Future<int> getRadius() async {
+  try {
+    final DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get();
+
+    if (userSnapshot.exists) {
+      final group = userSnapshot.get('group');
+      final DocumentSnapshot groupSnapshot = await FirebaseFirestore.instance
+          .collection('Groups')
+          .doc(group)
+          .get();
+
+      if (groupSnapshot.exists) {
+        return groupSnapshot.get('radius');
+      } else {
+        throw ('Group data not found');
+      }
+    } else {
+      throw ('User data not found');
     }
+  } catch (e) {
+    print('Error fetching radius: $e');
+    return 0; // Return a default value or handle the error accordingly
+  }
+}
+
 
 Future<List<MemberLocation>> fetchGroupMembersWithLocations(String passcode) async {
   try {
@@ -98,48 +111,53 @@ void startFetchingMemberLocations(BuildContext context) {
 
 
     final FirebaseAuth auth = FirebaseAuth.instance;
-    Future<String> groupName() async {
+   Future<String> groupName() async {
+  try {
+    return await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then((value) async {
+      groupcode = value.get('group');
       return await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
+          .collection('Groups')
+          .doc(value.get('group'))
           .get()
-          .then((value) async {
-        groupcode = value.get('group');
-        return await FirebaseFirestore.instance
-            .collection('Groups')
-            .doc(value.get('group'))
-            .get()
-            .then((value2) {
-          return value2.get('groupname');
-        });
+          .then((value2) {
+        return value2.get('groupname');
       });
-    }
+    }).catchError((error) {
+      print('Error fetching data: $error');
+      throw error;
+    });
+  } catch (e) {
+    print('Error in groupName function: $e');
+    throw e;
+  }
+}
 
-    Future<void> checkifLeader() async {
-      final FirebaseAuth auth = FirebaseAuth.instance;
-      final db = FirebaseFirestore.instance;
-      db
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then((value) async {
+
+  Future<void> checkifLeader() async {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final db = FirebaseFirestore.instance;
+  db
+    .collection('Users')
+    .doc(auth.currentUser!.displayName)
+    .get()
+    .then((value) async {
+      if (this.mounted) {
         if (value.get("group leader") == true) {
           setState(() {
-             
             check = true;
           });
-          
-         
         } else {
           setState(() {
-                        
             check = false;
           });
-          
-          
         }
-      });
-    }
+      }
+    });
+}
 
     Future<void> quitGroup(String user) async {
       final FirebaseAuth auth = FirebaseAuth.instance;
@@ -199,8 +217,8 @@ void startFetchingMemberLocations(BuildContext context) {
             _buildCircularButton(Icons.message, "Messages", Colors.green, () {
               Navigator.pushNamed(context, "/messageScreen");
             }),
-            _buildCircularButton(Icons.health_and_safety, "Safety", Colors.red, () {
-              print("Safety button tapped");
+            _buildCircularButton(Icons.map, "Map", Colors.red, () {
+              Navigator.pushNamed(context, '/groupMapScreen');
             }),
             _buildCircularButton(Icons.group, "Member List", Colors.purple, () async {
               Navigator.pushNamed(context, "/membersScreen");

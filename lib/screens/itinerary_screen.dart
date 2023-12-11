@@ -280,7 +280,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                                                       'event': snapshot.data[0][index]['event'],
                                                     });
                                                     Navigator.pop(context);
-                                                    setState(() {});
+                                                    if(this.mounted){setState(() {});}
                                                   },
                                                   child: const Text('OK'),
                                                 ),
@@ -342,86 +342,99 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  showDialog<String>(
-                                    context: context,
-                                    builder: (BuildContext context) =>
-                                        AlertDialog(
-                                      title: const Text('Make an Event!'),
-                                      content: Form(
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              CupertinoButton(
-                                                onPressed: () => _showDialog(
-                                                  CupertinoDatePicker(
-                                                    initialDateTime: now,
-                                                    use24hFormat: false,
-                                                    onDateTimeChanged:
-                                                        (DateTime newTime) {
-                                                      setState(
-                                                          () => now = newTime);
-                                                    },
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  DateFormat(
-                                                          'dd/MM/yyyy - hh:mm a')
-                                                      .format(now),
-                                                  style: const TextStyle(
-                                                    fontSize: 16.0,
-                                                  ),
-                                                ),
-                                              ),
-                                              TextFormField(
-                                                controller: eventController,
-                                                decoration:
-                                                    const InputDecoration(
-                                                  border:
-                                                      UnderlineInputBorder(),
-                                                  labelText: 'Event',
-                                                ),
-                                              ),
-                                              TextFormField(
-                                                controller:
-                                                    descriptionController,
-                                                decoration:
-                                                    const InputDecoration(
-                                                  border:
-                                                      UnderlineInputBorder(),
-                                                  labelText: 'Description',
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            addItinerary({
-                                              'date_time':
-                                                  Timestamp.fromDate(now),
-                                              'description':
-                                                  descriptionController.text,
-                                              'event': eventController.text,
-                                            });
-                                            Navigator.pop(context);
-                                            eventController.text = '';
-                                            descriptionController.text = '';
-                                            setState(() {});
-                                          },
-                                          child: const Text('Submit'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
+  showDialog<String>(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: const Text('Make an Event!'),
+      content: Form(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CupertinoButton(
+                onPressed: () => _showDialog(
+                  CupertinoDatePicker(
+                    initialDateTime: now,
+                    use24hFormat: false,
+                    onDateTimeChanged: (DateTime newTime) {
+                      if (this.mounted) {
+                        setState(() {
+                          now = newTime;
+                        });
+                      }
+                    },
+                  ),
+                ),
+                child: Text(
+                  DateFormat('dd/MM/yyyy - hh:mm a').format(now),
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                  ),
+                ),
+              ),
+              TextFormField(
+                controller: eventController,
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Event',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an event';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Description',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a description';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            if (eventController.text.trim().isNotEmpty &&
+                descriptionController.text.trim().isNotEmpty) {
+              addItinerary({
+                'date_time': Timestamp.fromDate(now),
+                'description': descriptionController.text,
+                'event': eventController.text,
+              });
+              Navigator.pop(context);
+              eventController.text = '';
+              descriptionController.text = '';
+              setState(() {});
+            } else {
+              // Show error message or handle the empty fields case
+              // For example:
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please fill all fields')),
+              );
+            }
+          },
+          child: const Text('Submit'),
+        ),
+      ],
+    ),
+  );
+},
+
                               );
                             }
                           }

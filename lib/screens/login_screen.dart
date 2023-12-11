@@ -33,49 +33,46 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<void> _login(BuildContext context) async {
+    Future<void> _login(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: nameController.text,
         password: passwordController.text,
       );
-
-      // Call the startLocationUpdates function when the user logs in
-      startLocationUpdates(nameController.text);
       await inGroup().then((value) async {
-        if (value) {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => GroupScreen()));
-        } else {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        if(value) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => GroupScreen()));
+        }
+        else {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
         }
       });
     } on FirebaseAuthException catch (e) {
       print(e.code);
       switch (e.code) {
-        case 'invalid-credential':
-          setState(() {
-            nameError = 'The email address provided is invalid.';
-            passwordError = 'The password provided is invalid.';
-          });
-          break;
-        case 'channel-error':
-          setState(() {
-            nameError = nameController.text.isEmpty
-                ? 'The email address provided is empty.'
-                : '';
-            passwordError = passwordController.text.isEmpty
-                ? 'The password provided is empty.'
-                : '';
-          });
-          break;
-      }
-    } catch (e) {
+  case 'invalid-credential':
+    if (this.mounted) {
       setState(() {
+        nameError = 'The email address provided is invalid.';
+        passwordError = 'The password provided is invalid.';
+      });
+    }
+    break;
+  case 'channel-error':
+    if (this.mounted) {
+      setState(() {
+        nameError = nameController.text.isEmpty ? 'The email address provided is empty.' : '';
+        passwordError = passwordController.text.isEmpty ? 'The password provided is empty.' : '';
+      });
+    }
+    break;
+}
+
+    } catch (e) {
+      if (this.mounted){setState(() {
         passwordError = 'There has been an error. Please try again.';
         nameError = 'There has been an error. Please try again.';
-      });
+      });}
     }
   }
 
