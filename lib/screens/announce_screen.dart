@@ -14,15 +14,19 @@ class AnnouncementScreen extends StatefulWidget {
 class _AnnouncementScreenState extends State<AnnouncementScreen> {
   final TextEditingController announcementController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-
-  @override
+ @override
   Widget build(BuildContext context) {
-    // void constantRefresh() {
-    //   setState(() {});
-    // }
+    void constantRefresh() {
+      if (this.mounted) {
+        setState(() {
+          // Your state changes go here
+        });
+      }
+    }
 
-    // Timer.periodic(const Duration(seconds: 5), (Timer t) => constantRefresh());
+    Timer.periodic(const Duration(seconds: 1), (Timer t) => constantRefresh());
 
+    
     final FirebaseAuth auth = FirebaseAuth.instance;
     Future<bool> isLeader() async {
       return await FirebaseFirestore.instance
@@ -249,7 +253,7 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                                                             }
                                                           );
                                                           Navigator.pop(context);
-                                                          setState(() {});
+                                                        if(this.mounted){setState(() {});}
                                                         },
                                                         child: const Text('OK'),
                                                       ),
@@ -310,67 +314,80 @@ class _AnnouncementScreenState extends State<AnnouncementScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  showDialog<String>(
-                                    context: context,
-                                    builder: (BuildContext context) =>
-                                        AlertDialog(
-                                      title: const Text('Make an Annoucement!'),
-                                      content: Form(
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              TextFormField(
-                                                controller:
-                                                    announcementController,
-                                                decoration:
-                                                    const InputDecoration(
-                                                  border:
-                                                      UnderlineInputBorder(),
-                                                  labelText: 'Announcement',
-                                                ),
-                                              ),
-                                              TextFormField(
-                                                controller:
-                                                    descriptionController,
-                                                decoration:
-                                                    const InputDecoration(
-                                                  border:
-                                                      UnderlineInputBorder(),
-                                                  labelText: 'Description',
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            addAnnouncement({
-                                              'announcement':
-                                                  announcementController.text,
-                                              'date_time': Timestamp.fromDate(
-                                                  DateTime.now()),
-                                              'description':
-                                                  descriptionController.text,
-                                            });
-                                            Navigator.pop(context);
-                                            announcementController.text = '';
-                                            descriptionController.text = '';
-                                            setState(() {});
-                                          },
-                                          child: const Text('Submit'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Make an Announcement!'),
+        content: Form(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextFormField(
+                  controller: announcementController,
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Announcement',
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter an announcement';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Description',
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a description';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (announcementController.text.isEmpty ||
+                  descriptionController.text.isEmpty) {
+                // Show a message to the user indicating the fields are required
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Announcement and Description are required'),
+                  ),
+                );
+              } else {
+                addAnnouncement({
+                  'announcement': announcementController.text,
+                  'date_time': Timestamp.fromDate(DateTime.now()),
+                  'description': descriptionController.text,
+                });
+                Navigator.pop(context);
+                announcementController.text = '';
+                descriptionController.text = '';
+                if (this.mounted) {
+                  setState(() {});
+                }
+              }
+            },
+            child: const Text('Submit'),
+          ),
+        ],
+      ),
+    );
+  },
                               );
                             }
                           }

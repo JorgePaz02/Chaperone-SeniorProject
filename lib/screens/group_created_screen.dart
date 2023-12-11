@@ -22,7 +22,6 @@ class groupcreated extends StatefulWidget {
   final String name;
   final int passcode;
 
-  // etc
   @override
   State<StatefulWidget> createState() {
     return GroupCreatedScreen();
@@ -30,120 +29,112 @@ class groupcreated extends StatefulWidget {
 }
 
 class GroupCreatedScreen extends State<groupcreated> {
-  final groupnames = CreateGroupScreen().groupname;
-  final numbers = CreateGroupScreen().number;
   final String randomCode = generateRandomCode();
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-                'lib/assets/GroupMade.png'), // Replace with your image asset path
-            fit: BoxFit.cover, // You can adjust the fit as needed
+    return WillPopScope(
+      onWillPop: () async {
+        // Prevent back navigation
+        return false;
+      },
+      child: Scaffold(
+        appBar: null, // Set the AppBar to null
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('lib/assets/GroupMade.png'),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const SizedBox(height: 50.0),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text(
-                  "", //hide grou phas been made
-                  style: TextStyle(
-                    fontSize: 48.0,
-                    fontWeight: FontWeight.bold,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 50.0),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Text(
+                    "",
+                    style: TextStyle(
+                      fontSize: 48.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(
-                  height: 120.0), // Add spacing between text and code
-              Container(
-                padding: const EdgeInsets.all(
-                    16.0), // Add padding to create the text box
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black), // Border color
-                  borderRadius: BorderRadius.circular(0.0), // Rounded corners
-                ),
-                child: Column(
-                  children: <Widget>[
-                    const Text(
-                      "Your Group Code Is:",
-                      style: TextStyle(
-                        fontSize: 36.0,
-                        fontWeight: FontWeight.bold,
+                const SizedBox(height: 240.0),
+                Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(0.0),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      const Text(
+                        "Your Group Code Is:",
+                        style: TextStyle(
+                          fontSize: 36.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 40.0), // Add spacing
-                    Text(
-                      randomCode, // Display the generated random code
-                      style: const TextStyle(
-                        fontSize: 72.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Align(
-                  alignment:
-                      Alignment.center, // Align the button to the bottom center
-                  child: ElevatedButton(
-                    onPressed: () {
-                      int radius =
-                          0; // Replace this with your actual radius value
-                      groupSetup(
-                        widget.name,
-                        widget.passcode,
+                      const SizedBox(height: 40.0),
+                      Text(
                         randomCode,
-                        auth.currentUser!.displayName,
-                        radius,
-                      );
+                        style: const TextStyle(
+                          fontSize: 72.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        int radius = 0;
+                        groupSetup(
+                          widget.name,
+                          widget.passcode,
+                          randomCode,
+                          auth.currentUser!.displayName,
+                          radius,
+                        );
 
-                      joininggroupAsLeader(
-                          randomCode, auth.currentUser!.displayName);
+                        joininggroupAsLeader(
+                          randomCode,
+                          auth.currentUser!.displayName,
+                        );
 
-                      // Navigate to the '/groupScreen' route and pass 'randomCode' as a parameter
-                      Navigator.pushNamed(context,
-                          '/groupScreen' // Pass 'randomCode' as an argument
-                          );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors
-                          .black, // Set the button background color to black
-                      padding: const EdgeInsets.symmetric(
+                        Navigator.pushNamed(
+                          context,
+                          '/groupScreen',
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 40.0,
-                          vertical: 16.0), // Adjust padding as needed
-                    ),
-                    child: const Text(
-                      "Continue",
-                      style: TextStyle(
-                        fontSize: 18.0, // Set the font size for the button text
-                        color: Colors.white, // Set the text color to white
+                          vertical: 16.0,
+                        ),
+                      ),
+                      child: const Text(
+                        "Continue",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

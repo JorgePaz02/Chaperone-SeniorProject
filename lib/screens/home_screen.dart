@@ -5,49 +5,87 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
   final FirebaseAuth auth = FirebaseAuth.instance;
-
+  
+Future<void> _showLogoutDialog(BuildContext context) async {
+  return showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Log Out'),
+        content: Text('Are you sure you want to log out?'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('Log Out'),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context).pop();
+              Navigator.pushReplacementNamed(context, '/mainscreen'); // Navigate to the MainScreen after logout
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
   @override
-  Widget build(BuildContext context) {
-    void checkGroup() {
-      FirebaseFirestore.instance
-          .collection('Users')
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then(
-        (value) {
-          if (value.get('group') != "") {
-            Navigator.pushNamed(context, '/groupScreen');
-          }
-        },
-      );
-    }
+Widget build(BuildContext context) {
+  // Function to check if the user belongs to a group and navigate accordingly
+  void checkGroup() {
+    FirebaseFirestore.instance
+        .collection('Users')
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then(
+      (value) {
+        if (value.get('group') != "") {
+          Navigator.pushReplacementNamed(context, '/groupScreen');
+        }
+      },
+    );
+  }
 
-    Future<String> getName() async {
-      final FirebaseAuth auth = FirebaseAuth.instance;
-      return await FirebaseFirestore.instance
-          .collection("Users")
-          .doc(auth.currentUser!.displayName)
-          .get()
-          .then(
-        (value) async {
-          return auth.currentUser!.displayName.toString();
-        },
-      );
-    }
+  // Function to fetch the user's display name
+  Future<String> getName() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    return await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(auth.currentUser!.displayName)
+        .get()
+        .then(
+      (value) async {
+        return auth.currentUser!.displayName.toString();
+      },
+    );
+  }
 
-    checkGroup();
+  // Calling the checkGroup function
+  checkGroup();
 
-    return Scaffold(
+  return WillPopScope(
+    onWillPop: () async {
+      return false; // Disable backtracking
+    },
+    child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
         elevation: 0,
-        leading: const CircleAvatar(
-          backgroundColor:
-              Colors.transparent, // Background color of the circle button
-          child: Icon(
-            Icons.person,
-            color: Colors.purple,
-            size: 45.0,
+        leading: GestureDetector(
+          onTap: () {
+            _showLogoutDialog(context);
+          },
+          child: CircleAvatar(
+            backgroundColor: Colors.transparent,
+            child: Icon(
+              Icons.person,
+              color: Colors.purple,
+              size: 45.0,
+            ),
           ),
         ),
         title: FutureBuilder<String>(
@@ -64,8 +102,7 @@ class HomeScreen extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image:
-                AssetImage('lib/assets/JoinOrAdd.png'), // Update the image path
+            image: AssetImage('lib/assets/JoinOrAdd.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -76,14 +113,13 @@ class HomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   const Text(
-                    "", //removal of wywtdt
+                    "",
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(
-                      height: 20.0), // Add spacing between text and buttons
+                  const SizedBox(height: 20.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -95,17 +131,14 @@ class HomeScreen extends StatelessWidget {
                             },
                             child: const CircleAvatar(
                               radius: 60.0,
-                              backgroundColor: Colors
-                                  .blue, // Background color of the circle button
+                              backgroundColor: Colors.blue,
                               child: Padding(
-                                padding: EdgeInsets.all(8.0), // Add padding
+                                padding: EdgeInsets.all(8.0),
                                 child: Icon(Icons.list, size: 48.0),
                               ),
                             ),
                           ),
-                          const SizedBox(
-                              height:
-                                  10.0), // Add spacing between text and button
+                          const SizedBox(height: 10.0),
                           const Text(
                             "Create Group",
                             style: TextStyle(
@@ -115,8 +148,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(
-                          width: 80.0), // Add spacing between buttons
+                      const SizedBox(width: 80.0),
                       Column(
                         children: <Widget>[
                           GestureDetector(
@@ -125,18 +157,15 @@ class HomeScreen extends StatelessWidget {
                             },
                             child: const CircleAvatar(
                               radius: 60.0,
-                              backgroundColor: Colors
-                                  .green, // Background color of the circle button
+                              backgroundColor: Colors.green,
                               child: Padding(
-                                padding: EdgeInsets.all(8.0), // Add padding
+                                padding: EdgeInsets.all(8.0),
                                 child: Icon(Icons.sensor_door_outlined,
                                     size: 48.0),
                               ),
                             ),
                           ),
-                          const SizedBox(
-                              height:
-                                  10.0), // Add spacing between text and button
+                          const SizedBox(height: 10.0),
                           const Text(
                             "Join Group",
                             style: TextStyle(
@@ -154,6 +183,7 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
